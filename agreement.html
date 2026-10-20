@@ -1,0 +1,708 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Agreement Editor - KAYID ALJAZEERA</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; }
+        .arabic-text { font-family: 'Amiri', serif; }
+        .section-card { background:#fff; border:1px solid #e2e8f0; border-radius:8px; padding:18px; margin-bottom:16px; box-shadow:0 1px 2px rgba(0,0,0,0.03); }
+        .section-title { font-size:11px; font-weight:700; letter-spacing:0.05em; color:#334155; text-transform:uppercase; }
+        .form-label { display:block; font-size:9.5px; font-weight:700; letter-spacing:0.04em; color:#64748b; text-transform:uppercase; margin-bottom:4px; }
+        .form-input { width:100%; padding:7px 10px; background:#fff; border:1px solid #cbd5e1; border-radius:6px; font-size:11.5px; font-weight:600; color:#0f172a; outline:none; transition:all 0.15s ease; box-sizing:border-box; }
+        .form-input:focus { border-color:#c59b27; box-shadow:0 0 0 2px rgba(197,155,39,0.15); }
+        .form-input-ar { text-align:right; direction:rtl; font-family:'Amiri',serif; }
+        .btn-blue { background:#0d2346; border:1px solid #c59b27; color:#fff; font-weight:700; font-size:11.5px; padding:8px 16px; border-radius:6px; transition:background 0.15s; cursor:pointer; }
+        .btn-blue:hover { background:#122f5c; color:#fde68a; }
+        .btn-light-blue { background:#eff6ff; color:#2563eb; font-weight:700; font-size:10.5px; padding:5px 10px; border-radius:5px; border:1px solid #dbeafe; cursor:pointer; }
+        .btn-light-blue:hover { background:#dbeafe; }
+        .btn-ghost { background:transparent; color:#64748b; font-size:11.5px; font-weight:600; padding:6px 12px; border-radius:6px; border:1px solid #e2e8f0; cursor:pointer; }
+        .btn-ghost:hover { background:#f8fafc; color:#0f172a; }
+        .nav-pill { padding:6px 16px; border-radius:6px; font-size:11px; font-weight:700; color:#475569; background:#fff; border:1px solid #cbd5e1; cursor:pointer; }
+        .nav-pill.active { background:#1e293b; color:#fff; border-color:#1e293b; }
+        .pdf-page { width:210mm; min-height:296.5mm; max-height:296.5mm; box-sizing:border-box; background:#fff; margin:0 auto 20px auto; padding:8mm 10mm; font-family:Arial,Helvetica,sans-serif; position:relative; box-shadow:0 4px 12px rgba(0,0,0,0.08); overflow:hidden; }
+        .term-row { border:1px solid #e2e8f0; border-radius:6px; padding:10px; margin-bottom:8px; background:#f8fafc; }
+    </style>
+</head>
+<body>
+<div class="min-h-screen p-3 md:p-6">
+<div class="max-w-[1700px] mx-auto">
+
+<!-- TOP BAR -->
+<div class="bg-white border border-slate-200 rounded-xl p-4 mb-5 flex flex-wrap justify-between items-center shadow-sm">
+    <div>
+        <h1 class="text-xs font-extrabold tracking-wider text-slate-800 uppercase">SERVICE AGREEMENT EDITOR</h1>
+        <p class="text-[11px] text-slate-500 font-medium">KAYID ALJAZEERA COMPANY · Bilingual Service Agreement اتفاقية خدمات</p>
+    </div>
+    <div class="flex items-center gap-3 mt-2 sm:mt-0">
+        <a href="index.html" class="btn-ghost inline-flex items-center gap-1.5 no-underline">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+            <span>Dashboard</span>
+        </a>
+        <button type="button" id="resetBtn" class="btn-ghost">Reset</button>
+        <button type="button" id="topPrintBtn" class="btn-blue">Print / Save PDF</button>
+    </div>
+</div>
+
+<!-- SPLIT LAYOUT -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+
+<!-- LEFT EDITOR -->
+<div class="max-h-[88vh] overflow-y-auto pr-1">
+<form id="agreementForm">
+
+<!-- 00 · KAYID ALJAZEERA INFO -->
+<div class="section-card border-l-4 border-l-[#c59b27]">
+    <div class="section-title mb-3">00 · KAYID ALJAZEERA (Our Company - First Party / الطرف الأول)</div>
+    <div class="grid grid-cols-2 gap-3 mb-3">
+        <div><label class="form-label">COMPANY NAME (EN)</label><input type="text" id="fp_nameEN" class="form-input" value="KAYID ALJAZEERA COMPANY"></div>
+        <div><label class="form-label">COMPANY NAME (AR)</label><input type="text" id="fp_nameAR" class="form-input form-input-ar arabic-text" value="شركة كايد الجزيرة"></div>
+    </div>
+    <div class="mb-3"><label class="form-label">SUB-TITLE</label><input type="text" id="fp_subTitle" class="form-input" value="CONTRACTING COMPANY LLC · KSA"></div>
+    <div class="grid grid-cols-2 gap-3 mb-3">
+        <div><label class="form-label">C.R. NUMBER</label><input type="text" id="fp_cr" class="form-input" value="7052038598"></div>
+        <div><label class="form-label">VAT NUMBER</label><input type="text" id="fp_vat" class="form-input" value="315035698500003"></div>
+    </div>
+    <div class="mb-3"><label class="form-label">ADDRESS</label><input type="text" id="fp_address" class="form-input" value="Jubail, Eastern Province, Kingdom of Saudi Arabia"></div>
+    <div class="grid grid-cols-2 gap-3">
+        <div><label class="form-label">PHONE</label><input type="text" id="fp_phone" class="form-input" value="+966 050 356 4007"></div>
+        <div><label class="form-label">EMAIL</label><input type="text" id="fp_email" class="form-input" value="masoud@kayidaljazeera.com"></div>
+    </div>
+</div>
+
+<!-- 01 · CONTRACT REFERENCE -->
+<div class="section-card">
+    <div class="section-title mb-3">01 · CONTRACT REFERENCE</div>
+    <div class="grid grid-cols-2 gap-3">
+        <div><label class="form-label">CONTRACT DATE</label><input type="text" id="contractDate" class="form-input" value="16-08-2026"></div>
+        <div><label class="form-label">CONTRACT NUMBER</label><input type="text" id="contractNumber" class="form-input" value="250078"></div>
+    </div>
+</div>
+
+<!-- 02 · SECOND PARTY -->
+<div class="section-card">
+    <div class="section-title mb-3">02 · SECOND PARTY (Client / Subcontractor / الطرف الثاني)</div>
+    <div class="grid grid-cols-2 gap-3 mb-3">
+        <div><label class="form-label">COMPANY NAME (EN)</label><input type="text" id="sp_nameEN" class="form-input" value="SANEEL Contracting Co."></div>
+        <div><label class="form-label">COMPANY NAME (AR)</label><input type="text" id="sp_nameAR" class="form-input form-input-ar arabic-text" value="شركة سنيل للمقاولات"></div>
+    </div>
+    <div class="grid grid-cols-2 gap-3 mb-3">
+        <div><label class="form-label">CR NUMBER</label><input type="text" id="sp_cr" class="form-input" value="1010155869"></div>
+        <div><label class="form-label">ADDRESS</label><input type="text" id="sp_address" class="form-input" value="P.O.Box 240421 Riyadh 11322"></div>
+    </div>
+    <div class="grid grid-cols-3 gap-3">
+        <div><label class="form-label">PHONE</label><input type="text" id="sp_phone" class="form-input" value="2291053"></div>
+        <div><label class="form-label">FAX</label><input type="text" id="sp_fax" class="form-input" value="2291056"></div>
+        <div><label class="form-label">EMAIL</label><input type="text" id="sp_email" class="form-input" value="info@saneel.org"></div>
+    </div>
+</div>
+
+<!-- 03 · CONTRACT DETAILS -->
+<div class="section-card">
+    <div class="section-title mb-3">03 · CONTRACT DETAILS</div>
+    <div class="mb-3"><label class="form-label">WORK DESCRIPTION (EN)</label><textarea id="workDescEN" rows="2" class="form-input">Assigned to the second party, by KAYID ALJAZEERA COMPANY.</textarea></div>
+    <div class="mb-3"><label class="form-label">WORK DESCRIPTION (AR)</label><textarea id="workDescAR" rows="2" class="form-input form-input-ar arabic-text">المسندة إلى الطرف الثاني من شركة كايد الجزيرة</textarea></div>
+    <div class="grid grid-cols-2 gap-3 mb-3">
+        <div><label class="form-label">CONTRACT NO. REF</label><input type="text" id="contractNoRef" class="form-input" value="250078"></div>
+        <div><label class="form-label">WORK LOCATION</label><input type="text" id="workLocation" class="form-input" value="Khobar housing"></div>
+    </div>
+    <div class="grid grid-cols-2 gap-3">
+        <div><label class="form-label">WORK DURATION</label><input type="text" id="workDuration" class="form-input" value="365 days"></div>
+        <div><label class="form-label">START DATE</label><input type="text" id="startDate" class="form-input" value="16-08-2026"></div>
+    </div>
+</div>
+
+<!-- 04 · TERMS -->
+<div class="section-card">
+    <div class="flex justify-between items-center mb-3">
+        <div class="section-title">04 · TERMS &amp; CONDITIONS</div>
+        <button type="button" id="addTermBtn" class="btn-light-blue">+ Add Term</button>
+    </div>
+    <div id="termsContainer"></div>
+</div>
+
+<!-- 05 · OFFICIAL STAMPS & SIGNATURES -->
+<div class="section-card border-l-4 border-l-emerald-600">
+    <div class="section-title mb-3 flex items-center justify-between">
+        <span>05 · OFFICIAL STAMPS &amp; SIGNATURES / الأختام والتوقيع</span>
+        <span class="text-[9.5px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded tracking-normal">Auto-Background Removal</span>
+    </div>
+    <p class="text-[11px] text-slate-500 mb-3 font-medium">Select stamp images from your PC. The system automatically removes white paper backgrounds like in MS Word, making stamps transparent on the contract.</p>
+
+    <!-- FIRST PARTY STAMP (KAYID ALJAZEERA) -->
+    <div class="p-3 bg-slate-50 border border-slate-200 rounded-lg mb-4">
+        <div class="flex items-center justify-between mb-2">
+            <span class="font-bold text-xs text-blue-900">First Party Stamp (ختم كايد الجزيرة - الطرف الأول)</span>
+            <span id="fpStampStatus" class="text-[10px] text-slate-400 font-semibold">No stamp chosen</span>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2 mb-2">
+            <input type="file" id="fpStampInput" accept="image/*" class="hidden">
+            <button type="button" onclick="document.getElementById('fpStampInput').click()" class="btn-blue text-[10.5px] py-1.5 px-3 flex items-center gap-1.5 shadow-sm">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                Select Stamp from PC / اختر الختم من جهازك
+            </button>
+            <button type="button" id="fpRemoveStampBtn" class="hidden btn-ghost text-[10.5px] py-1.5 px-2.5 text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200">
+                Remove Stamp / حذف
+            </button>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2 pt-2 border-t border-slate-200">
+            <label class="flex items-center gap-2 text-[11px] font-medium text-slate-700 cursor-pointer">
+                <input type="checkbox" id="fp_removeBg" checked class="rounded text-blue-600 focus:ring-blue-500 w-4 h-4">
+                <span>Remove White Background (شفاف مثل وورد)</span>
+            </label>
+            <div class="flex items-center gap-2">
+                <span class="text-[10px] font-bold text-slate-500 uppercase">Stamp Size:</span>
+                <input type="range" id="fp_stampHeight" min="40" max="75" value="55" class="w-24 h-1.5 bg-slate-200 rounded-lg cursor-pointer">
+                <span id="fp_sizeLabel" class="text-[10.5px] text-slate-600 font-semibold">55px</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECOND PARTY STAMP -->
+    <div class="p-3 bg-slate-50 border border-slate-200 rounded-lg">
+        <div class="flex items-center justify-between mb-2">
+            <span class="font-bold text-xs text-slate-800">Second Party Stamp (ختم الطرف الثاني)</span>
+            <span id="spStampStatus" class="text-[10px] text-slate-400 font-semibold">No stamp chosen</span>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2 mb-2">
+            <input type="file" id="spStampInput" accept="image/*" class="hidden">
+            <button type="button" onclick="document.getElementById('spStampInput').click()" class="btn-ghost text-[10.5px] py-1.5 px-3 flex items-center gap-1.5 text-slate-700 border-slate-300 hover:bg-slate-100 shadow-sm">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                Select Stamp from PC / اختر ختم الطرف الثاني
+            </button>
+            <button type="button" id="spRemoveStampBtn" class="hidden btn-ghost text-[10.5px] py-1.5 px-2.5 text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200">
+                Remove Stamp / حذف
+            </button>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2 pt-2 border-t border-slate-200">
+            <label class="flex items-center gap-2 text-[11px] font-medium text-slate-700 cursor-pointer">
+                <input type="checkbox" id="sp_removeBg" checked class="rounded text-blue-600 focus:ring-blue-500 w-4 h-4">
+                <span>Remove White Background (شفاف مثل وورد)</span>
+            </label>
+            <div class="flex items-center gap-2">
+                <span class="text-[10px] font-bold text-slate-500 uppercase">Stamp Size:</span>
+                <input type="range" id="sp_stampHeight" min="40" max="75" value="55" class="w-24 h-1.5 bg-slate-200 rounded-lg cursor-pointer">
+                <span id="sp_sizeLabel" class="text-[10.5px] text-slate-600 font-semibold">55px</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- GENERATE BUTTON -->
+<div class="mt-5 mb-8">
+    <button type="button" id="generateBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-extrabold py-3.5 px-4 rounded-xl shadow-lg transition-all text-xs tracking-wider uppercase">
+        GENERATE &amp; PRINT SERVICE AGREEMENT PDF
+    </button>
+</div>
+
+</form>
+</div>
+
+<!-- RIGHT PREVIEW -->
+<div class="bg-slate-300/70 p-4 md:p-6 rounded-2xl border border-slate-300 min-h-[88vh] flex flex-col items-center">
+    <div id="previewRenderArea" class="w-full flex flex-col items-center overflow-x-auto"></div>
+</div>
+
+</div>
+</div>
+</div>
+
+<script>
+const JIBARCO_LOGO = 'data:image/png;base64,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';
+
+const DEFAULT_TERMS = [
+    { en: "Second Party will provide all necessary needs to complete the jobs.", ar: "يؤمن الطرف الثاني للطرف الأول جميع ما يلزم لتنفيذ الأعمال المستندة إليه. (أعمال)" },
+    { en: "First Party will be responsible for I.D. cards, Vehicle stickers and gate passes for Second Party. Second Party will provide all the required documents for this purpose to the First Party.", ar: "يكون الطرف الأول مسئولاً عن تأمين بطاقات وتصاريح دخول العمل للطرف الثاني وكذلك ملصقات المعدات ويكون الطرف الثاني مسئولاً عن تقديم المستندات والصور المطلوبة لاستخراج مثل هذه التصاريح." },
+    { en: "Second Party is responsible for wages and insurance coverage for their personnel & equipment (including their party liability insurance, GOSI, accident coverage etc)", ar: "يكون الطرف الثاني مسئولاً مسئولية كاملة عن دفع المستحقات النظامية والتأمين على معداته في حالة الحوادث والإصابات الصناعية لذا عليه إكمال إجراءات التأمين." },
+    { en: "Work location: Khobar housing", ar: "موقع العمل: المجمع السكني بالخبر" },
+    { en: "First Party will pay to the Second Party for services at the rates as agreed. If delay salary payment & other benefit of employees and it's not match with according to labor law.", ar: "يدفع الطرف الأول مستحقات الطرف الثاني حسب الأسعار المتفق عليها في طلب الشراء أو العرض المقدم من الطرف الثاني. إذا تأخر دفع المرتبات و منفعة أخرى من الموظفين، وأنها لا تتطابق مع وفقاً لقانون العمل." },
+    { en: "Work duration 365 days starting from 16-08-2026", ar: "مدة العقد 365 يوم بداية من 16/08/2026" },
+    { en: "WHEREAS the first Party has various contracts with refineries, Petrochemical Plants and other Clients within Kingdom of Saudi Arabia, and the Second Party after discussion, has agreed to provide subcontractor services to the First Party.", ar: "حيث أن الطرف الأول ينفذ عدة عقود مع الهيئة السعودية للمياه لو المحطات ليتر وكيماوية وعملاء آخرين داخل المملكة وقد ابدا الطرف الثاني رغبته في تأمين خدمات للطرف الأول." }
+];
+
+function esc(str) {
+    return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function addTermRow(en, ar) {
+    const container = document.getElementById('termsContainer');
+    const idx = container.children.length + 1;
+    const row = document.createElement('div');
+    row.className = 'term-row';
+    row.innerHTML = `
+        <div class="flex justify-between items-center mb-2">
+            <span class="text-xs font-bold text-blue-600 term-num"># ${idx}</span>
+            <button type="button" class="remove-term text-slate-400 hover:text-red-500 font-bold text-base">×</button>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+            <textarea rows="3" class="form-input term-en text-[11px]" placeholder="English term..." style="resize:vertical;">${en || ''}</textarea>
+            <textarea rows="3" class="form-input form-input-ar arabic-text term-ar text-[11px]" placeholder="النص العربي..." style="resize:vertical;">${ar || ''}</textarea>
+        </div>`;
+    row.querySelectorAll('textarea').forEach(t => t.addEventListener('input', updatePreview));
+    row.querySelector('.remove-term').addEventListener('click', () => { row.remove(); renumberTerms(); updatePreview(); });
+    container.appendChild(row);
+    updatePreview();
+}
+
+function renumberTerms() {
+    document.querySelectorAll('.term-num').forEach((el, i) => el.textContent = '# ' + (i + 1));
+}
+
+function loadDefaultData() {
+    document.getElementById('fp_nameEN').value    = 'KAYID ALJAZEERA COMPANY';
+    document.getElementById('fp_nameAR').value = 'شركة كايد الجزيرة';
+    document.getElementById('fp_subTitle').value  = 'CONTRACTING COMPANY LLC · KSA';
+    document.getElementById('fp_cr').value        = '7052038598';
+    document.getElementById('fp_vat').value       = '315035698500003';
+    document.getElementById('fp_address').value   = 'Jubail, Eastern Province, Kingdom of Saudi Arabia';
+    document.getElementById('fp_phone').value     = '+966 050 356 4007';
+    document.getElementById('fp_email').value     = 'masoud@kayidaljazeera.com';
+
+    document.getElementById('contractDate').value   = '16-08-2026';
+    document.getElementById('contractNumber').value = '250078';
+
+    document.getElementById('sp_nameEN').value  = 'SANEEL Contracting Co.';
+    document.getElementById('sp_nameAR').value  = 'شركة سنيل للمقاولات';
+    document.getElementById('sp_cr').value      = '1010155869';
+    document.getElementById('sp_address').value = 'P.O.Box 240421 Riyadh 11322';
+    document.getElementById('sp_phone').value   = '2291053';
+    document.getElementById('sp_fax').value     = '2291056';
+    document.getElementById('sp_email').value   = 'info@saneel.org';
+
+    document.getElementById('workDescEN').value    = 'Assigned to the second party, by KAYID ALJAZEERA COMPANY.';
+    document.getElementById('workDescAR').value = 'المسندة إلى الطرف الثاني من شركة كايد الجزيرة';
+    document.getElementById('contractNoRef').value = '250078';
+    document.getElementById('workLocation').value  = 'Khobar housing';
+    document.getElementById('workDuration').value  = '365 days';
+    document.getElementById('startDate').value     = '16-08-2026';
+
+    document.getElementById('termsContainer').innerHTML = '';
+    DEFAULT_TERMS.forEach(t => addTermRow(t.en, t.ar));
+    updatePreview();
+}
+
+let fpStampRawImg = null;
+let fpStampProcessedData = '';
+let fpStampHeight = 55;
+
+let spStampRawImg = null;
+let spStampProcessedData = '';
+let spStampHeight = 55;
+
+function processImageWithTransparency(img, removeBg, threshold = 215) {
+    if (!img) return '';
+    const canvas = document.createElement('canvas');
+    canvas.width = img.naturalWidth || img.width;
+    canvas.height = img.naturalHeight || img.height;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(img, 0, 0);
+
+    if (!removeBg) {
+        return canvas.toDataURL('image/png');
+    }
+
+    try {
+        const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const d = imgData.data;
+        const t = Number(threshold) || 215;
+
+        for (let i = 0; i < d.length; i += 4) {
+            const r = d[i];
+            const g = d[i+1];
+            const b = d[i+2];
+            const minVal = Math.min(r, g, b);
+            const maxVal = Math.max(r, g, b);
+            const diff = maxVal - minVal;
+
+            // When background is paper-like (near white or light neutral gray/cream)
+            if (minVal >= t && diff < 35) {
+                d[i+3] = 0; // 100% transparent
+            } else if (minVal >= (t - 25) && diff < 35) {
+                // Anti-aliased smooth edge
+                const alphaFactor = (t - minVal) / 25;
+                d[i+3] = Math.round(d[i+3] * alphaFactor);
+            }
+        }
+        ctx.putImageData(imgData, 0, 0);
+        return canvas.toDataURL('image/png');
+    } catch(err) {
+        console.error('Error processing stamp transparency', err);
+        return canvas.toDataURL('image/png');
+    }
+}
+
+function handleFPStampUpload(file) {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+            fpStampRawImg = img;
+            reprocessFPStamp();
+            const statusEl = document.getElementById('fpStampStatus');
+            if (statusEl) {
+                statusEl.textContent = file.name.length > 18 ? file.name.substring(0, 15) + '...' : file.name;
+                statusEl.className = 'text-[10px] text-emerald-700 font-bold bg-emerald-100 px-2 py-0.5 rounded border border-emerald-300';
+            }
+            const removeBtn = document.getElementById('fpRemoveStampBtn');
+            if (removeBtn) removeBtn.classList.remove('hidden');
+        };
+        img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+}
+
+function reprocessFPStamp() {
+    if (!fpStampRawImg) {
+        fpStampProcessedData = '';
+    } else {
+        const removeBg = document.getElementById('fp_removeBg') ? document.getElementById('fp_removeBg').checked : true;
+        fpStampProcessedData = processImageWithTransparency(fpStampRawImg, removeBg, 215);
+    }
+    updatePreview();
+}
+
+function handleSPStampUpload(file) {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+            spStampRawImg = img;
+            reprocessSPStamp();
+            const statusEl = document.getElementById('spStampStatus');
+            if (statusEl) {
+                statusEl.textContent = file.name.length > 18 ? file.name.substring(0, 15) + '...' : file.name;
+                statusEl.className = 'text-[10px] text-emerald-700 font-bold bg-emerald-100 px-2 py-0.5 rounded border border-emerald-300';
+            }
+            const removeBtn = document.getElementById('spRemoveStampBtn');
+            if (removeBtn) removeBtn.classList.remove('hidden');
+        };
+        img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+}
+
+function reprocessSPStamp() {
+    if (!spStampRawImg) {
+        spStampProcessedData = '';
+    } else {
+        const removeBg = document.getElementById('sp_removeBg') ? document.getElementById('sp_removeBg').checked : true;
+        spStampProcessedData = processImageWithTransparency(spStampRawImg, removeBg, 215);
+    }
+    updatePreview();
+}
+
+function updatePreview() {
+    const fpNameEN   = document.getElementById('fp_nameEN').value    || 'KAYID ALJAZEERA COMPANY';
+    const fpNameAR   = document.getElementById('fp_nameAR').value    || 'شركة كايد الجزيرة';
+    const fpSubTitle = document.getElementById('fp_subTitle').value  || 'CONTRACTING COMPANY LLC · KSA';
+    const fpCR       = document.getElementById('fp_cr').value        || '7052038598';
+    const fpVat      = document.getElementById('fp_vat').value       || '315035698500003';
+    const fpAddress  = document.getElementById('fp_address').value   || 'Jubail, Eastern Province, Kingdom of Saudi Arabia';
+    const fpPhone    = document.getElementById('fp_phone').value     || '+966 050 356 4007';
+    const fpEmail    = document.getElementById('fp_email').value     || 'masoud@kayidaljazeera.com';
+
+    const contractDate   = document.getElementById('contractDate').value   || '16-08-2026';
+    const contractNumber = document.getElementById('contractNumber').value || '250078';
+
+    const spNameEN  = document.getElementById('sp_nameEN').value  || 'SANEEL Contracting Co.';
+    const spNameAR  = document.getElementById('sp_nameAR').value  || 'شركة سنيل للمقاولات';
+    const spCR      = document.getElementById('sp_cr').value      || '1010155869';
+    const spAddress = document.getElementById('sp_address').value || 'P.O.Box 240421 Riyadh 11322';
+    const spPhone   = document.getElementById('sp_phone').value   || '2291053';
+    const spFax     = document.getElementById('sp_fax').value     || '2291056';
+    const spEmail   = document.getElementById('sp_email').value   || 'info@saneel.org';
+
+    const workDescEN    = document.getElementById('workDescEN').value    || '';
+    const workDescAR    = document.getElementById('workDescAR').value    || '';
+    const contractNoRef = document.getElementById('contractNoRef').value || '250078';
+    const workLocation  = document.getElementById('workLocation').value  || 'Khobar housing';
+    const workDuration  = document.getElementById('workDuration').value  || '365 days';
+    const startDate     = document.getElementById('startDate').value     || '16-08-2026';
+
+    // Build terms HTML
+    let termsRows = '';
+    document.querySelectorAll('.term-row').forEach((row, i) => {
+        const en = row.querySelector('.term-en').value || '';
+        const ar = row.querySelector('.term-ar').value || '';
+        termsRows += `
+            <tr style="vertical-align:top;">
+                <td style="width:50%;padding:5px 7px;border-bottom:1px solid #e2e8f0;border-right:1px solid #e2e8f0;font-size:8.5px;color:#1e293b;line-height:1.5;">
+                    <b style="color:#0d2346;">${i+1}.</b> ${esc(en)}
+                </td>
+                <td style="width:50%;padding:5px 7px;border-bottom:1px solid #e2e8f0;font-size:8.5px;color:#1e293b;line-height:1.5;text-align:right;direction:rtl;font-family:'Amiri',serif;">
+                    <b style="color:#0d2346;">.${i+1}</b> ${esc(ar)}
+                </td>
+            </tr>`;
+    });
+
+    const html = `
+    <div class="pdf-page" id="agreementPage">
+
+        <!-- HEADER -->
+        <div style="display:table;width:100%;margin-bottom:6px;">
+            <div style="display:table-cell;vertical-align:middle;width:50%;">
+                <div style="display:flex;align-items:center;gap:8px;">
+                    <img src="${JIBARCO_LOGO}" style="width:52px;height:52px;object-fit:contain;">
+                    <div>
+                        <div style="font-weight:800;font-size:13px;color:#0d2346;">${esc(fpNameEN)}</div>
+                        <div style="font-size:7.5px;color:#475569;font-weight:600;">${esc(fpSubTitle)}</div>
+                        <div style="font-size:7px;color:#64748b;font-weight:600;">C.R.: ${esc(fpCR)} | VAT: ${esc(fpVat)}</div>
+                    </div>
+                </div>
+            </div>
+            <div style="display:table-cell;vertical-align:middle;text-align:right;width:50%;">
+                <div style="font-family:'Amiri',serif;font-weight:bold;font-size:16px;color:#0d2346;direction:rtl;">${esc(fpNameAR)}</div>
+                <div style="font-size:7.5px;color:#475569;line-height:1.4;direction:rtl;font-family:'Amiri',serif;">
+                    ${esc(fpAddress)}<br>${esc(fpPhone)}
+                </div>
+            </div>
+        </div>
+        <div style="border-top:2.5px solid #0d2346;margin-bottom:2px;"></div>
+        <div style="border-top:1.5px solid #c59b27;margin-bottom:10px;"></div>
+
+        <!-- TITLE -->
+        <div style="text-align:center;margin-bottom:10px;">
+            <div style="font-family:'Amiri',serif;font-size:17px;font-weight:700;color:#0d2346;text-decoration:underline;">اتفاقية خدمات</div>
+            <div style="font-size:13px;font-weight:800;color:#0d2346;letter-spacing:0.08em;text-decoration:underline;margin-top:2px;">SERVICE AGREEMENT</div>
+        </div>
+
+        <!-- PARTIES BLOCK -->
+        <table style="width:100%;border-collapse:collapse;margin-bottom:8px;border:1px solid #cbd5e1;">
+            <tr>
+                <td style="width:50%;vertical-align:top;padding:8px 10px;border-right:1px solid #cbd5e1;font-size:8.5px;line-height:1.7;color:#1e293b;">
+                    This Contract is concluded on <b>${esc(contractDate)}</b><br>
+                    Between each of the following:<br><br>
+                    <b>First party:</b> ${esc(fpNameEN)} &nbsp; <b>C.R:</b> ${esc(fpCR)}<br><br>
+                    <b>Second Party:</b> ${esc(spNameEN)} &nbsp; <b>C.R:</b> ${esc(spCR)}
+                </td>
+                <td style="width:50%;vertical-align:top;padding:8px 10px;text-align:right;direction:rtl;font-family:'Amiri',serif;font-size:10px;line-height:1.7;color:#1e293b;">
+                    تم إبرام هذا العقد في <b>${esc(contractDate)}</b><br>
+                    من بين كل من:<br><br>
+                    <b>الطرف الأول /</b> ${esc(fpNameAR)} &nbsp; <b>س.ت /</b> ${esc(fpCR)}<br><br>
+                    <b>الطرف الثاني /</b> ${esc(spNameAR)} &nbsp; <b>س.ت /</b> ${esc(spCR)}
+                </td>
+            </tr>
+        </table>
+
+        <!-- CONTRACT PURPOSE -->
+        <table style="width:100%;border-collapse:collapse;margin-bottom:8px;border:1px solid #cbd5e1;">
+            <tr><td colspan="2" style="background:#eff6ff;padding:4px 8px;border-bottom:1px solid #cbd5e1;">
+                <div style="font-size:8.5px;font-weight:700;color:#0d2346;">Contract Purpose &nbsp;/&nbsp; <span style="font-family:'Amiri',serif;">الغرض من العقد رقم (${esc(contractNoRef)})</span></div>
+            </td></tr>
+            <tr>
+                <td style="width:50%;vertical-align:top;padding:7px 10px;border-right:1px solid #e2e8f0;font-size:8.5px;line-height:1.55;color:#1e293b;">
+                    This contract was concluded for the works<br>
+                    <em>${esc(workDescEN)}</em><br>
+                    Contract No. (<b>${esc(contractNoRef)}</b>)<br>
+                    Work Location: <b>${esc(workLocation)}</b><br>
+                    Duration: <b>${esc(workDuration)}</b> starting <b>${esc(startDate)}</b>
+                </td>
+                <td style="width:50%;vertical-align:top;padding:7px 10px;text-align:right;direction:rtl;font-family:'Amiri',serif;font-size:9.5px;line-height:1.55;color:#1e293b;">
+                    تم إبرام هذا العقد من أجل<br>
+                    <em>${esc(workDescAR)}</em><br>
+                    عقد رقم (<b>${esc(contractNoRef)}</b>)<br>
+                    موقع العمل: <b>${esc(workLocation)}</b><br>
+                    المدة: <b>${esc(workDuration)}</b> اعتباراً من <b>${esc(startDate)}</b>
+                </td>
+            </tr>
+        </table>
+
+        <!-- TERMS & CONDITIONS -->
+        <table style="width:100%;border-collapse:collapse;margin-bottom:10px;border:1px solid #cbd5e1;">
+            <tr><td colspan="2" style="background:#eff6ff;padding:4px 8px;border-bottom:1px solid #cbd5e1;">
+                <div style="font-size:8.5px;font-weight:700;color:#0d2346;">Terms &amp; Conditions &nbsp;/&nbsp; <span style="font-family:'Amiri',serif;">الشروط والأحكام</span></div>
+            </td></tr>
+            ${termsRows}
+        </table>
+
+        <!-- SIGNATURES -->
+        <table style="width:100%;border-collapse:collapse;margin-bottom:12px;">
+            <tr>
+                <td style="width:50%;padding-right:8px;vertical-align:top;">
+                    <div style="border:1px solid #cbd5e1;border-radius:4px;overflow:hidden;">
+                        <div style="background:#1e3a8a;color:#fff;font-size:9px;font-weight:700;padding:5px 8px;text-align:center;">
+                            First Party / الطرف الأول
+                        </div>
+                        <div style="padding:8px;position:relative;">
+                            <div style="border:${fpStampProcessedData ? '1.5px dashed transparent' : '1.5px dashed #94a3b8'};height:${fpStampHeight}px;border-radius:4px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;">
+                                ${fpStampProcessedData 
+                                    ? `<img src="${fpStampProcessedData}" style="max-height:${fpStampHeight}px;max-width:95%;object-fit:contain;mix-blend-mode:multiply;display:block;margin:auto;">` 
+                                    : `<span style="font-size:8px;color:#94a3b8;">STAMP / ختم</span>`
+                                }
+                            </div>
+                            <div style="border-bottom:1px solid #475569;margin:8px 0 3px;"></div>
+                            <div style="font-size:7.5px;color:#64748b;text-align:center;">Signature / التوقيع</div>
+                            <div style="font-size:7.5px;color:#475569;text-align:center;margin-top:3px;">${esc(fpNameEN)} | C.R.: ${esc(fpCR)}</div>
+                        </div>
+                    </div>
+                </td>
+                <td style="width:50%;padding-left:8px;vertical-align:top;">
+                    <div style="border:1px solid #cbd5e1;border-radius:4px;overflow:hidden;">
+                        <div style="background:#1e3a8a;color:#fff;font-size:9px;font-weight:700;padding:5px 8px;text-align:center;">
+                            Second Party / الطرف الثاني
+                        </div>
+                        <div style="padding:8px;position:relative;">
+                            <div style="border:${spStampProcessedData ? '1.5px dashed transparent' : '1.5px dashed #94a3b8'};height:${spStampHeight}px;border-radius:4px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;">
+                                ${spStampProcessedData 
+                                    ? `<img src="${spStampProcessedData}" style="max-height:${spStampHeight}px;max-width:95%;object-fit:contain;mix-blend-mode:multiply;display:block;margin:auto;">` 
+                                    : `<span style="font-size:8px;color:#94a3b8;">STAMP / ختم</span>`
+                                }
+                            </div>
+                            <div style="border-bottom:1px solid #475569;margin:8px 0 3px;"></div>
+                            <div style="font-size:7.5px;color:#64748b;text-align:center;">Signature / التوقيع</div>
+                            <div style="font-size:7.5px;color:#475569;text-align:center;margin-top:3px;">${esc(spNameEN)} | C.R.: ${esc(spCR)}</div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+        <!-- FOOTER -->
+        <div style="position:absolute;bottom:10mm;left:10mm;right:10mm;border-top:1.5px solid #1e3a8a;padding-top:4px;text-align:center;">
+            <div style="font-family:'Amiri',serif;font-size:8px;color:#0d2346;font-weight:bold;direction:rtl;margin-bottom:1px;">
+                الجبيل &ndash; المنطقة الشرقية &ndash; جوال : ٠٥٠٣٥٦٤٠٠٧ &ndash; المملكة العربية السعودية
+            </div>
+            <div style="font-size:7.5px;color:#334155;font-weight:600;margin-bottom:1px;">
+                Jubail, Eastern Province - Mobile: +966 050 356 4007 - Kingdom of Saudi Arabia
+            </div>
+            <div style="font-size:7.5px;color:#2563eb;font-weight:600;">
+                ${esc(fpEmail)} &nbsp;&nbsp; ${esc(fpPhone)}
+            </div>
+        </div>
+
+    </div>`;
+
+    document.getElementById('previewRenderArea').innerHTML = html;
+}
+
+function printPDF() {
+    const contractNumber = document.getElementById('contractNumber').value || '250078';
+    const element = document.getElementById('agreementPage');
+    if (!element) { alert('Preview not loaded yet. Please wait.'); return; }
+
+    const prevShadow = element.style.boxShadow;
+    element.style.boxShadow = 'none';
+
+    const opt = {
+        margin:       [0, 0, 0, 0],
+        filename:     'Service_Agreement_' + contractNumber + '.pdf',
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2, useCORS: true, letterRendering: true, allowTaint: true },
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+
+    html2pdf().set(opt).from(element).toPdf().get('pdf').then((pdf) => {
+        const total = pdf.internal.getNumberOfPages();
+        for (let p = total; p > 1; p--) {
+            pdf.deletePage(p);
+        }
+    }).save().then(() => {
+        element.style.boxShadow = prevShadow;
+    }).catch((err) => {
+        console.error('Error generating PDF:', err);
+        element.style.boxShadow = prevShadow;
+    });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadDefaultData();
+
+    document.querySelectorAll('#agreementForm input, #agreementForm textarea').forEach(el => {
+        el.addEventListener('input', updatePreview);
+    });
+
+    document.getElementById('addTermBtn').addEventListener('click', () => { addTermRow('', ''); });
+    document.getElementById('topPrintBtn').addEventListener('click', printPDF);
+    document.getElementById('generateBtn').addEventListener('click', printPDF);
+    document.getElementById('resetBtn').addEventListener('click', () => {
+        if (confirm('Reset all fields to defaults?')) loadDefaultData();
+    });
+
+    // Stamp controls event listeners
+    const fpStampInput = document.getElementById('fpStampInput');
+    if (fpStampInput) {
+        fpStampInput.addEventListener('change', (e) => {
+            if (e.target.files && e.target.files[0]) handleFPStampUpload(e.target.files[0]);
+        });
+    }
+
+    const spStampInput = document.getElementById('spStampInput');
+    if (spStampInput) {
+        spStampInput.addEventListener('change', (e) => {
+            if (e.target.files && e.target.files[0]) handleSPStampUpload(e.target.files[0]);
+        });
+    }
+
+    const fpRemoveBg = document.getElementById('fp_removeBg');
+    if (fpRemoveBg) fpRemoveBg.addEventListener('change', reprocessFPStamp);
+
+    const spRemoveBg = document.getElementById('sp_removeBg');
+    if (spRemoveBg) spRemoveBg.addEventListener('change', reprocessSPStamp);
+
+    const fpStampHeightSlider = document.getElementById('fp_stampHeight');
+    if (fpStampHeightSlider) {
+        fpStampHeightSlider.addEventListener('input', (e) => {
+            fpStampHeight = parseInt(e.target.value) || 55;
+            const lbl = document.getElementById('fp_sizeLabel');
+            if (lbl) lbl.textContent = fpStampHeight + 'px';
+            updatePreview();
+        });
+    }
+
+    const spStampHeightSlider = document.getElementById('sp_stampHeight');
+    if (spStampHeightSlider) {
+        spStampHeightSlider.addEventListener('input', (e) => {
+            spStampHeight = parseInt(e.target.value) || 55;
+            const lbl = document.getElementById('sp_sizeLabel');
+            if (lbl) lbl.textContent = spStampHeight + 'px';
+            updatePreview();
+        });
+    }
+
+    const fpRemoveBtn = document.getElementById('fpRemoveStampBtn');
+    if (fpRemoveBtn) {
+        fpRemoveBtn.addEventListener('click', () => {
+            fpStampRawImg = null;
+            fpStampProcessedData = '';
+            if (fpStampInput) fpStampInput.value = '';
+            const statusEl = document.getElementById('fpStampStatus');
+            if (statusEl) {
+                statusEl.textContent = 'No stamp chosen';
+                statusEl.className = 'text-[10px] text-slate-400 font-semibold';
+            }
+            fpRemoveBtn.classList.add('hidden');
+            updatePreview();
+        });
+    }
+
+    const spRemoveBtn = document.getElementById('spRemoveStampBtn');
+    if (spRemoveBtn) {
+        spRemoveBtn.addEventListener('click', () => {
+            spStampRawImg = null;
+            spStampProcessedData = '';
+            if (spStampInput) spStampInput.value = '';
+            const statusEl = document.getElementById('spStampStatus');
+            if (statusEl) {
+                statusEl.textContent = 'No stamp chosen';
+                statusEl.className = 'text-[10px] text-slate-400 font-semibold';
+            }
+            spRemoveBtn.classList.add('hidden');
+            updatePreview();
+        });
+    }
+});
+</script>
+</body>
+</html>

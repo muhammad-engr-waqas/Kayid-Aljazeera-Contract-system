@@ -1,0 +1,172 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KAYID ALJAZEERA COMPANY - Document & Contract Management</title>
+    <link rel="icon" type="image/png" href="logo_icon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Amiri:wght@400;700&display=swap');
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: linear-gradient(135deg, #09172e 0%, #0d2346 50%, #102a54 100%);
+            min-height: 100vh;
+        }
+        .arabic-text { font-family: 'Amiri', serif; }
+        .gold-gradient-text {
+            background: linear-gradient(135deg, #fce08b 0%, #d4af37 50%, #b8860b 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .gold-border-glow {
+            box-shadow: 0 0 25px -5px rgba(212, 175, 55, 0.25);
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 30px -10px rgba(10, 28, 54, 0.4), 0 0 20px 0 rgba(212, 175, 55, 0.2);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between p-4 sm:p-6 text-slate-100">
+
+    <!-- Top User Navigation Bar -->
+    <header class="max-w-5xl w-full mx-auto flex items-center justify-between bg-white/95 backdrop-blur-md border border-amber-400/30 rounded-2xl px-5 py-3 shadow-xl mb-6">
+        <div class="flex items-center gap-3.5">
+            <div class="h-10 w-auto flex items-center justify-center bg-white rounded-xl p-1 shadow-sm border border-slate-200">
+                <img src="logo_icon.png" alt="KAG Logo" class="h-8 w-auto object-contain">
+            </div>
+            <div>
+                <div class="flex items-center gap-2">
+                    <span class="text-sm font-extrabold text-[#0d2346] tracking-tight block">KAYID ALJAZEERA PORTAL</span>
+                    <span class="text-xs font-bold text-amber-700 arabic-text">شركة كايد الجزيرة</span>
+                </div>
+                <span class="text-[10px] text-slate-500 font-semibold tracking-wide">Enterprise Contract & Document System</span>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-3">
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 text-[11px] font-extrabold text-[#0d2346] bg-gradient-to-r from-amber-100 to-amber-200 border border-amber-400/60 rounded-full shadow-sm">
+                <span class="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
+                OFFICIAL SYSTEM
+            </span>
+        </div>
+    </header>
+
+    <main class="max-w-6xl w-full mx-auto my-auto py-4">
+
+        <!-- Header Hero Banner with Official Logo -->
+        <div class="text-center mb-10">
+            <div class="inline-flex flex-col sm:flex-row items-center justify-center gap-4 bg-white/95 backdrop-blur-md p-4 sm:px-8 sm:py-5 rounded-3xl border border-amber-300/40 shadow-2xl mb-4 gold-border-glow">
+                <div class="bg-white p-2 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-center">
+                    <img src="logo.png" alt="Kayid Aljazeera Company" class="h-16 sm:h-20 w-auto object-contain">
+                </div>
+                <div class="text-center sm:text-left">
+                    <div class="text-2xl sm:text-3xl font-black text-[#0d2346] tracking-tight flex items-center justify-center sm:justify-start gap-2">
+                        <span>KAYID ALJAZEERA</span>
+                        <span class="text-xs font-bold px-2 py-0.5 bg-[#0d2346] text-amber-300 rounded-md">KAG</span>
+                    </div>
+                    <div class="text-sm sm:text-base font-bold text-amber-700 arabic-text mt-0.5">شركة كايد الجزيرة للمقاولات العامة</div>
+                    <div class="text-[11px] text-slate-500 font-semibold tracking-wider uppercase mt-0.5">General Contracting & Manpower Supply · KSA</div>
+                </div>
+            </div>
+            <p id="portalSubtitle" class="text-amber-200/90 text-sm font-medium tracking-wide">Select an official document generator or management module below</p>
+        </div>
+
+        <!-- Cards -->
+        <div id="cardsContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+
+            <!-- Invoice -->
+            <a id="card-invoice" href="invoice.html" class="block bg-white rounded-2xl border border-slate-200/90 shadow-lg hover:border-amber-400 transition-all duration-300 p-5 text-center group card-hover">
+                <div class="w-14 h-14 bg-gradient-to-br from-[#0d2346] to-[#163668] rounded-2xl flex items-center justify-center mx-auto mb-4 p-3 shadow-md group-hover:scale-105 transition-all">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-amber-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                    </svg>
+                </div>
+                <div class="font-extrabold text-[#0d2346] text-sm mb-1">VAT Invoice</div>
+                <div class="text-xs text-slate-500 font-medium">ZATCA Compliant · Timesheet</div>
+                <div class="mt-4 text-xs font-bold text-amber-600 group-hover:text-amber-700 flex items-center justify-center gap-1">
+                    <span>Open Editor</span>
+                    <span class="group-hover:translate-x-1 transition-transform">→</span>
+                </div>
+            </a>
+
+            <!-- Purchase Order -->
+            <a id="card-purchase" href="pusrchase.html" class="block bg-white rounded-2xl border border-slate-200/90 shadow-lg hover:border-amber-400 transition-all duration-300 p-5 text-center group card-hover">
+                <div class="w-14 h-14 bg-gradient-to-br from-emerald-800 to-emerald-950 rounded-2xl flex items-center justify-center mx-auto mb-4 p-3 shadow-md group-hover:scale-105 transition-all">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-emerald-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+                    </svg>
+                </div>
+                <div class="font-extrabold text-[#0d2346] text-sm mb-1">Purchase Order</div>
+                <div class="text-xs text-slate-500 font-medium">Procurement · Subcontract</div>
+                <div class="mt-4 text-xs font-bold text-emerald-700 group-hover:text-emerald-800 flex items-center justify-center gap-1">
+                    <span>Open Editor</span>
+                    <span class="group-hover:translate-x-1 transition-transform">→</span>
+                </div>
+            </a>
+
+            <!-- Quotation -->
+            <a id="card-quotation" href="quotation.html" class="block bg-white rounded-2xl border border-slate-200/90 shadow-lg hover:border-amber-400 transition-all duration-300 p-5 text-center group card-hover">
+                <div class="w-14 h-14 bg-gradient-to-br from-[#0d2346] to-amber-700 rounded-2xl flex items-center justify-center mx-auto mb-4 p-3 shadow-md group-hover:scale-105 transition-all">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-amber-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
+                    </svg>
+                </div>
+                <div class="font-extrabold text-[#0d2346] text-sm mb-1">Quotation</div>
+                <div class="text-xs text-slate-500 font-medium">Manpower Supply · Rates</div>
+                <div class="mt-4 text-xs font-bold text-amber-600 group-hover:text-amber-700 flex items-center justify-center gap-1">
+                    <span>Open Editor</span>
+                    <span class="group-hover:translate-x-1 transition-transform">→</span>
+                </div>
+            </a>
+
+            <!-- Service Agreement -->
+            <a id="card-agreement" href="agreement.html" class="block bg-white rounded-2xl border border-slate-200/90 shadow-lg hover:border-amber-400 transition-all duration-300 p-5 text-center group card-hover">
+                <div class="w-14 h-14 bg-gradient-to-br from-[#0b1e3b] to-amber-800 rounded-2xl flex items-center justify-center mx-auto mb-4 p-3 shadow-md group-hover:scale-105 transition-all">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-amber-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                    </svg>
+                </div>
+                <div class="font-extrabold text-[#0d2346] text-sm mb-1">Service Agreement</div>
+                <div class="text-xs text-slate-500 font-medium">Bilingual · اتفاقية خدمات</div>
+                <div class="mt-4 text-xs font-bold text-amber-700 group-hover:text-amber-800 flex items-center justify-center gap-1">
+                    <span>Open Editor</span>
+                    <span class="group-hover:translate-x-1 transition-transform">→</span>
+                </div>
+            </a>
+
+            <!-- Employee Directory -->
+            <a id="card-employees" href="employees.html" class="block bg-white rounded-2xl border border-slate-200/90 shadow-lg hover:border-amber-400 transition-all duration-300 p-5 text-center group card-hover">
+                <div class="w-14 h-14 bg-gradient-to-br from-[#0d2346] to-[#1e457e] rounded-2xl flex items-center justify-center mx-auto mb-4 p-3 shadow-md group-hover:scale-105 transition-all">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-amber-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                    </svg>
+                </div>
+                <div class="font-extrabold text-[#0d2346] text-sm mb-1">Employee Directory</div>
+                <div class="text-xs text-slate-500 font-medium">Iqama · Records · Excel</div>
+                <div class="mt-4 text-xs font-bold text-[#0d2346] group-hover:text-amber-600 flex items-center justify-center gap-1">
+                    <span>Manage Staff</span>
+                    <span class="group-hover:translate-x-1 transition-transform">→</span>
+                </div>
+            </a>
+
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="max-w-5xl w-full mx-auto text-center mt-10 py-4 text-xs text-amber-100/70 border-t border-amber-400/20">
+        <div class="flex flex-wrap items-center justify-center gap-2">
+            <span class="font-bold text-amber-300">KAYID ALJAZEERA COMPANY</span>
+            <span class="text-amber-400">·</span>
+            <span class="arabic-text font-bold text-amber-200">شركة كايد الجزيرة</span>
+            <span class="text-amber-400">·</span>
+            <span>Jubail, Eastern Province, Kingdom of Saudi Arabia</span>
+            <span class="text-amber-400">·</span>
+            <span class="text-amber-200">masoud@kayidaljazeera.com</span>
+        </div>
+    </footer>
+
+</body>
+</html>

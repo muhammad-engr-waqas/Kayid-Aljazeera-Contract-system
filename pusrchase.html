@@ -1,0 +1,699 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Purchase Order Form with PDF Preview</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f1f5f9;
+        }
+        .section-card {
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+        }
+        .section-title {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            color: #475569;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+        }
+        .form-label {
+            display: block;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            color: #64748b;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+        .form-input {
+            width: 100%;
+            padding: 8px 12px;
+            background-color: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #0f172a;
+            outline: none;
+            transition: all 0.15s ease;
+        }
+        .form-input:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+        }
+        .btn-blue {
+            background-color: #2563eb;
+            color: #ffffff;
+            font-weight: 600;
+            font-size: 12px;
+            padding: 8px 16px;
+            border-radius: 6px;
+            transition: background-color 0.15s ease;
+        }
+        .btn-blue:hover {
+            background-color: #1d4ed8;
+        }
+        .btn-light-blue {
+            background-color: #eff6ff;
+            color: #2563eb;
+            font-weight: 600;
+            font-size: 11px;
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: 1px solid #dbeafe;
+            transition: all 0.15s ease;
+        }
+        .btn-light-blue:hover {
+            background-color: #dbeafe;
+        }
+        .btn-ghost {
+            background-color: transparent;
+            color: #64748b;
+            font-size: 12px;
+            font-weight: 500;
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+        }
+        .btn-ghost:hover {
+            background-color: #f8fafc;
+            color: #0f172a;
+        }
+        
+        /* Strict PDF Page Fit Styling */
+        .pdf-page-container {
+            width: 190mm;
+            box-sizing: border-box;
+            background: #ffffff;
+            margin: 0 auto;
+            padding: 0;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+    </style>
+</head>
+<body>
+
+<div class="min-h-screen p-4 md:p-6">
+    <div class="max-w-[1600px] mx-auto">
+        <!-- Top App Bar Header -->
+        <div class="bg-white border border-slate-200 rounded-lg p-4 mb-6 flex flex-wrap justify-between items-center shadow-sm">
+            <div>
+                <h1 class="text-sm font-bold tracking-wider text-slate-800 uppercase">Purchase Order Editor</h1>
+                <p class="text-xs text-slate-500 mt-0.5">Procurement & Subcontract Work Order</p>
+            </div>
+            <div class="flex items-center gap-3 mt-2 sm:mt-0">
+                <a href="index.html" class="btn-ghost inline-flex items-center gap-1.5 no-underline">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    <span>Dashboard</span>
+                </a>
+                <button type="button" id="resetBtn" class="btn-ghost">Reset</button>
+                <button type="button" id="topPrintBtn" class="btn-blue">Preview & Download PDF</button>
+            </div>
+        </div>
+
+        <!-- Main Container Split View -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+            
+            <!-- LEFT SIDE - FORM EDITOR -->
+            <div class="max-h-[85vh] overflow-y-auto pr-1">
+                <form id="poForm">
+                    
+                    <!-- 01 . PO REFERENCE -->
+                    <div class="section-card">
+                        <div class="section-title">01 · PO REFERENCE</div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="form-label">DATE</label>
+                                <input type="text" id="poDate" class="form-input" placeholder="13-07-2026">
+                            </div>
+                            <div>
+                                <label class="form-label">PO NUMBER</label>
+                                <input type="text" id="poNumber" class="form-input" placeholder="35HJ53">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 02 . ISSUER / COMPANY INFO -->
+                    <div class="section-card">
+                        <div class="section-title">02 · ISSUER / COMPANY INFO</div>
+                        <div class="mb-4">
+                            <label class="form-label">COMPANY NAME</label>
+                            <input type="text" id="companyName" class="form-input" placeholder="KAYID ALJAZEERA COMPANY">
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label class="form-label">ADDRESS LINE 1</label>
+                                <input type="text" id="companyAddr1" class="form-input" placeholder="AL KHOBOR AL SAMALIYA">
+                            </div>
+                            <div>
+                                <label class="form-label">ADDRESS LINE 2</label>
+                                <input type="text" id="companyAddr2" class="form-input" placeholder="DAMMAM.34223.">
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div>
+                                <label class="form-label">CR NUMBER</label>
+                                <input type="text" id="crNumber" class="form-input" placeholder="7052038598.">
+                            </div>
+                            <div>
+                                <label class="form-label">VAT NUMBER</label>
+                                <input type="text" id="vatNumber" class="form-input" placeholder="100261164210206.">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 03A & 03B . VENDOR & ATTENTION -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <!-- VENDOR -->
+                        <div class="section-card">
+                            <div class="section-title">03A · VENDOR</div>
+                            <div class="mb-3">
+                                <label class="form-label">VENDOR NAME</label>
+                                <input type="text" id="vendorName" class="form-input" placeholder="ALWURUD ALSAFRAAH COMPANY.">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">STREET</label>
+                                <input type="text" id="vendorStreet" class="form-input" placeholder="AL KHOBOR AL SHOBAKA.">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">CITY / REGION</label>
+                                <input type="text" id="vendorCity" class="form-input" placeholder="DAMMAM 34223.">
+                            </div>
+                            <div class="grid grid-cols-2 gap-2 mb-3">
+                                <div>
+                                    <label class="form-label">CR NO</label>
+                                    <input type="text" id="vendorCR" class="form-input" placeholder="7051558273.">
+                                </div>
+                                <div>
+                                    <label class="form-label">VAT NO</label>
+                                    <input type="text" id="vendorVAT" class="form-input" placeholder="100251158122912.">
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">PHONE</label>
+                                <input type="text" id="vendorPhone" class="form-input" placeholder="0559435644">
+                            </div>
+                            <div>
+                                <label class="form-label">EMAIL</label>
+                                <input type="email" id="vendorEmail" class="form-input" placeholder="alwurudalsafraah@gmail.com">
+                            </div>
+                        </div>
+
+                        <!-- ATTENTION -->
+                        <div class="section-card">
+                            <div class="section-title">03B · ATTENTION</div>
+                            <div class="mb-3">
+                                <label class="form-label">CONTACT PERSON</label>
+                                <input type="text" id="attentionContact" class="form-input" placeholder="JAKIR AHMED.">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">ADDRESS LINE 1</label>
+                                <input type="text" id="attentionAddr1" class="form-input" placeholder="AL KHOBOR ,SOBAKA.">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">ADDRESS LINE 2</label>
+                                <input type="text" id="attentionAddr2" class="form-input" placeholder="DAMMAM,AL KHOBOR.">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">PHONE</label>
+                                <input type="text" id="attentionPhone" class="form-input" placeholder="0552134484">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 04 . ORDER LINE ITEMS -->
+                    <div class="section-card">
+                        <div class="flex justify-between items-center mb-4">
+                            <div class="section-title mb-0" id="lineItemTitleCount">04 · ORDER LINE ITEMS (0)</div>
+                            <button type="button" id="addItemBtn" class="btn-light-blue">+ Add Item</button>
+                        </div>
+                        
+                        <div class="grid grid-cols-12 gap-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-2 px-1">
+                            <div class="col-span-1 text-center">ITEM #</div>
+                            <div class="col-span-4">DESCRIPTION</div>
+                            <div class="col-span-2 text-center">QTY</div>
+                            <div class="col-span-2 text-center">RATE HOURLY</div>
+                            <div class="col-span-2 text-center">TOTAL</div>
+                            <div class="col-span-1 text-center">ACT</div>
+                        </div>
+
+                        <div id="lineItemsContainer" class="space-y-2"></div>
+                    </div>
+
+                    <!-- 05 . COMMENTS & CONDITIONS -->
+                    <div class="section-card">
+                        <div class="flex justify-between items-center mb-4">
+                            <div class="section-title mb-0">05 · COMMENTS & CONDITIONS (A - G)</div>
+                            <button type="button" id="addCommentBtn" class="btn-light-blue">+ Add Clause</button>
+                        </div>
+                        <div id="commentsContainer" class="space-y-2"></div>
+                    </div>
+
+                    <!-- BOTTOM GENERATE BUTTON -->
+                    <div class="mt-6 mb-8">
+                        <button type="button" id="generatePdfBtn" class="w-full bg-[#0d2346] hover:bg-[#122f5c] border border-amber-400 text-white font-bold py-3.5 px-4 rounded-lg shadow-md transition-all text-xs tracking-wider uppercase">
+                            GENERATE & PREVIEW OFFICIAL PURCHASE ORDER
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+
+            <!-- RIGHT SIDE - LIVE PDF PREVIEW PANEL -->
+            <div class="bg-slate-200/60 p-4 md:p-6 rounded-xl border border-slate-300 min-h-[85vh] flex justify-center items-start overflow-x-auto">
+                <div class="bg-white shadow-xl rounded-sm p-6 text-slate-900 w-[210mm] box-border">
+                    <div id="pdfPreview" class="pdf-page-container">
+                        <!-- PDF Preview Live Rendered Content -->
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!-- PREVIEW MODAL POPUP BEFORE DOWNLOAD -->
+<div id="previewModal" class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl shadow-2xl max-w-4xl w-full max-h-[92vh] flex flex-col overflow-hidden">
+        <div class="p-4 bg-slate-800 text-white flex justify-between items-center">
+            <h3 class="font-bold text-sm tracking-wide uppercase">PDF Preview Confirmation</h3>
+            <button type="button" id="closeModalBtn" class="text-slate-400 hover:text-white text-xl font-bold px-2">&times;</button>
+        </div>
+        <div class="p-6 overflow-y-auto flex-1 bg-slate-100 flex justify-center">
+            <div class="bg-white shadow-lg p-6 w-[210mm]">
+                <div id="modalPdfContent" class="pdf-page-container"></div>
+            </div>
+        </div>
+        <div class="p-4 bg-white border-t border-slate-200 flex justify-end gap-3">
+            <button type="button" id="cancelModalBtn" class="btn-ghost">Back to Edit</button>
+            <button type="button" id="confirmDownloadBtn" class="btn-blue">Confirm & Download PDF</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let lineItemCount = 0;
+    let commentCount = 0;
+
+    function loadDefaultData() {
+        document.getElementById('poForm').reset();
+        document.getElementById('poDate').value = '13-07-2026';
+        document.getElementById('poNumber').value = '35HJ53';
+        document.getElementById('companyName').value = 'KAYID ALJAZEERA COMPANY';
+        document.getElementById('companyAddr1').value = 'AL KHOBOR AL SAMALIYA';
+        document.getElementById('companyAddr2').value = 'DAMMAM.34223.';
+        document.getElementById('crNumber').value = '7052038598.';
+        document.getElementById('vatNumber').value = '100261164210206.';
+
+        document.getElementById('vendorName').value = 'ALWURUD ALSAFRAAH COMPANY.';
+        document.getElementById('vendorStreet').value = 'AL KHOBOR AL SHOBAKA.';
+        document.getElementById('vendorCity').value = 'DAMMAM 34223.';
+        document.getElementById('vendorCR').value = '7051558273.';
+        document.getElementById('vendorVAT').value = '100251158122912.';
+        document.getElementById('vendorPhone').value = '0559435644';
+        document.getElementById('vendorEmail').value = 'alwurudalsafraah@gmail.com';
+
+        document.getElementById('attentionContact').value = 'JAKIR AHMED.';
+        document.getElementById('attentionAddr1').value = 'AL KHOBOR ,SOBAKA.';
+        document.getElementById('attentionAddr2').value = 'DAMMAM,AL KHOBOR.';
+        document.getElementById('attentionPhone').value = '0552134484';
+
+        document.getElementById('lineItemsContainer').innerHTML = '';
+        document.getElementById('commentsContainer').innerHTML = '';
+        lineItemCount = 0;
+        commentCount = 0;
+
+        addLineItem('AC TECHNICIAN', '3', '19.00', '57');
+        addLineItem('BLOCK MASON', '2', '18.00', '36');
+        addLineItem('PLASTER MASON', '2', '18.00', '36');
+        addLineItem('PAINTERS', '1', '19.00', '19');
+        addLineItem('CARPENTER', '1', '18.00', '18');
+
+        addComment('Accommodation, Food & Transportation provided by ALWURUD.');
+        addComment('Working Hours: Minimum 10 hours per day, 6 days in a week.');
+        addComment('Overtime rate will be the same of hourly rate.');
+        addComment('Medical at job site shall be provided by CLIENT.');
+        addComment('Time sheet to be submitted on or before 2nd of every following month.');
+        addComment('Payments to be released within 15 days after submission of invoice.');
+        addComment('Agreement should be for three Months and extendable.');
+
+        updatePreview();
+    }
+
+    function addLineItem(defaultDesc = '', defaultQty = '', defaultRate = '', defaultTotal = '') {
+        lineItemCount++;
+        const container = document.getElementById('lineItemsContainer');
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'grid grid-cols-12 gap-2 items-center line-item';
+        
+        itemDiv.innerHTML = `
+            <div class="col-span-1 text-center font-bold text-xs text-slate-500 item-index">#</div>
+            <div class="col-span-4">
+                <input type="text" placeholder="Description" value="${defaultDesc}" class="form-input uppercase description-input">
+            </div>
+            <div class="col-span-2">
+                <input type="text" placeholder="Qty" value="${defaultQty}" class="form-input text-center qty-input">
+            </div>
+            <div class="col-span-2">
+                <input type="text" placeholder="Rate" value="${defaultRate}" class="form-input text-center rate-input">
+            </div>
+            <div class="col-span-2">
+                <input type="text" placeholder="Total" value="${defaultTotal}" class="form-input text-center total-input">
+            </div>
+            <div class="col-span-1 text-center">
+                <button type="button" class="remove-item text-slate-400 hover:text-red-500 text-base font-bold">×</button>
+            </div>
+        `;
+
+        const removeBtn = itemDiv.querySelector('.remove-item');
+        const qtyInput = itemDiv.querySelector('.qty-input');
+        const rateInput = itemDiv.querySelector('.rate-input');
+        const totalInput = itemDiv.querySelector('.total-input');
+        const descInput = itemDiv.querySelector('.description-input');
+
+        qtyInput.addEventListener('input', updatePreview);
+        rateInput.addEventListener('input', updatePreview);
+        totalInput.addEventListener('input', updatePreview);
+        descInput.addEventListener('input', updatePreview);
+        
+        removeBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            itemDiv.remove();
+            renumberLineItems();
+            updatePreview();
+        });
+
+        container.appendChild(itemDiv);
+        renumberLineItems();
+        updatePreview();
+    }
+
+    function renumberLineItems() {
+        const items = document.querySelectorAll('.line-item');
+        items.forEach((item, index) => {
+            item.querySelector('.item-index').textContent = index + 1;
+        });
+        document.getElementById('lineItemTitleCount').textContent = `04 · ORDER LINE ITEMS (${items.length})`;
+    }
+
+    function addComment(defaultText = '') {
+        commentCount++;
+        const container = document.getElementById('commentsContainer');
+        const commentDiv = document.createElement('div');
+        commentDiv.className = 'flex items-center gap-2 comment-item';
+        commentDiv.innerHTML = `
+            <span class="font-bold text-xs text-slate-500 min-w-[18px] comment-label">${String.fromCharCode(64 + commentCount)}.</span>
+            <input type="text" placeholder="Enter condition/clause" value="${defaultText}" class="form-input flex-1 comment-input">
+            <button type="button" class="remove-comment text-slate-400 hover:text-red-500 text-lg font-bold px-1">×</button>
+        `;
+
+        const removeBtn = commentDiv.querySelector('.remove-comment');
+        const commentInput = commentDiv.querySelector('.comment-input');
+
+        removeBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            commentDiv.remove();
+            renumberComments();
+            updatePreview();
+        });
+
+        commentInput.addEventListener('input', updatePreview);
+        container.appendChild(commentDiv);
+        renumberComments();
+        updatePreview();
+    }
+
+    function renumberComments() {
+        const comments = document.querySelectorAll('.comment-item');
+        comments.forEach((comment, index) => {
+            comment.querySelector('.comment-label').textContent = String.fromCharCode(65 + index) + '.';
+        });
+        commentCount = comments.length;
+    }
+
+    function updatePreview() {
+        const poDate = document.getElementById('poDate').value || '13-07-2026';
+        const poNumber = document.getElementById('poNumber').value || '35HJ53';
+        const companyName = document.getElementById('companyName').value || 'KAYID ALJAZEERA COMPANY';
+        const companyAddr1 = document.getElementById('companyAddr1').value || 'AL KHOBOR AL SAMALIYA';
+        const companyAddr2 = document.getElementById('companyAddr2').value || 'DAMMAM.34223.';
+        const crNumber = document.getElementById('crNumber').value || '7052038598.';
+        const vatNumber = document.getElementById('vatNumber').value || '100261164210206.';
+
+        const vendorName = document.getElementById('vendorName').value || 'ALWURUD ALSAFRAAH COMPANY.';
+        const vendorStreet = document.getElementById('vendorStreet').value || 'AL KHOBOR AL SHOBAKA.';
+        const vendorCity = document.getElementById('vendorCity').value || 'DAMMAM 34223.';
+        const vendorCR = document.getElementById('vendorCR').value || '7051558273.';
+        const vendorVAT = document.getElementById('vendorVAT').value || '100251158122912.';
+        const vendorPhone = document.getElementById('vendorPhone').value || '0559435644';
+        const vendorEmail = document.getElementById('vendorEmail').value || 'alwurudalsafraah@gmail.com';
+
+        const attentionContact = document.getElementById('attentionContact').value || 'JAKIR AHMED.';
+        const attentionAddr1 = document.getElementById('attentionAddr1').value || 'AL KHOBOR ,SOBAKA.';
+        const attentionAddr2 = document.getElementById('attentionAddr2').value || 'DAMMAM,AL KHOBOR.';
+        const attentionPhone = document.getElementById('attentionPhone').value || '0552134484';
+
+        const lineItems = document.querySelectorAll('.line-item');
+        let itemsHTML = '';
+        const maxRows = Math.max(lineItems.length, 6);
+
+        for(let index = 0; index < maxRows; index++) {
+            if (index < lineItems.length) {
+                const item = lineItems[index];
+                const desc = item.querySelector('.description-input').value.toUpperCase() || '';
+                const qty = item.querySelector('.qty-input').value || '';
+                const rate = item.querySelector('.rate-input').value || '';
+                const total = item.querySelector('.total-input').value || '';
+
+                itemsHTML += `
+                    <tr style="height: 24px;">
+                        <td style="border: 1px solid #1e3a8a; padding: 3px 6px; text-align: center; font-weight: bold; font-size: 10px;">${index + 1}</td>
+                        <td style="border: 1px solid #1e3a8a; padding: 3px 8px; font-weight: bold; font-size: 10px;">${desc}</td>
+                        <td style="border: 1px solid #1e3a8a; padding: 3px 6px; text-align: center; font-weight: bold; font-size: 10px;">${qty}</td>
+                        <td style="border: 1px solid #1e3a8a; padding: 3px 6px; text-align: center; font-weight: bold; font-size: 10px;">${rate}</td>
+                        <td style="border: 1px solid #1e3a8a; padding: 3px 8px; text-align: right; font-weight: bold; font-size: 10px;">${total}</td>
+                    </tr>
+                `;
+            } else {
+                itemsHTML += `
+                    <tr style="height: 24px;">
+                        <td style="border: 1px solid #1e3a8a; padding: 3px 6px; text-align: center;"></td>
+                        <td style="border: 1px solid #1e3a8a; padding: 3px 8px;"></td>
+                        <td style="border: 1px solid #1e3a8a; padding: 3px 6px; text-align: center;"></td>
+                        <td style="border: 1px solid #1e3a8a; padding: 3px 6px; text-align: center;"></td>
+                        <td style="border: 1px solid #1e3a8a; padding: 3px 8px; text-align: right; font-weight: bold; font-size: 10px;">${index === 5 ? '-' : ''}</td>
+                    </tr>
+                `;
+            }
+        }
+
+        const comments = document.querySelectorAll('.comment-item');
+        let commentsHTML = '';
+        comments.forEach((comment, index) => {
+            const text = comment.querySelector('.comment-input').value;
+            const letter = String.fromCharCode(65 + index);
+            commentsHTML += `
+                <tr>
+                    <td style="padding: 1.5px 4px; font-weight: bold; font-size: 9.5px; width: 100%;">${letter}. ${text}</td>
+                </tr>
+            `;
+        });
+
+        const preview = `
+            <div style="width: 100%; box-sizing: border-box; font-size: 10px; color: #000; line-height: 1.2;">
+                
+                <!-- TOP HEADER -->
+                <div style="display: table; width: 100%; margin-bottom: 8px;">
+                    <div style="display: table-cell; vertical-align: top; width: 60%;">
+                        <div style="display: table;">
+                            <div style="display: table-cell; vertical-align: top; padding-right: 8px;">
+                                <div style="width: 48px; height: 48px;">
+                                    <img src="data:image/png;base64,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" style="width:42px;height:42px;object-fit:contain;" />
+                                </div>
+                            </div>
+                            <div style="display: table-cell; vertical-align: top;">
+                                <div style="font-weight: 800; font-size: 15px; color: #0d2346; letter-spacing: 0.3px;">${companyName}</div>
+                                <div style="color: #2563eb; font-size: 11px; font-weight: bold;">PURCHASE ORDER</div>
+                                <div style="font-size: 8.5px; color: #475569; font-weight: 600; margin-top: 1px;">
+                                    CONTRACTING COMPANY LLC · KSA<br>
+                                    C.R.: ${crNumber} | VAT: ${vatNumber}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="display: table-cell; vertical-align: top; text-align: right; width: 40%;">
+                        <div style="font-weight: bold; font-size: 14px; color: #0d2346; font-family: 'Amiri', 'Traditional Arabic', serif; margin-bottom: 2px;">شركة كايد الجزيرة</div>
+                        <div style="font-size: 8.5px; color: #475569; margin-bottom: 6px; line-height: 1.1;">
+                            ${companyAddr1}<br>
+                            ${companyAddr2}<br>
+                            +966 050 356 4007
+                        </div>
+                        <table style="border-collapse: collapse; font-size: 10px; margin-left: auto;">
+                            <tr>
+                                <td style="border: 1px solid #1e3a8a; padding: 2px 8px; background: #f1f5f9; font-weight: bold; font-size: 9px; color: #0d2346;">DATE</td>
+                                <td style="border: 1px solid #1e3a8a; padding: 2px 10px; font-weight: bold; min-width: 75px; text-align: center;">${poDate}</td>
+                            </tr>
+                            <tr>
+                                <td style="border: 1px solid #1e3a8a; padding: 2px 8px; background: #f1f5f9; font-weight: bold; font-size: 9px; color: #0d2346;">PO #</td>
+                                <td style="border: 1px solid #1e3a8a; padding: 2px 10px; font-weight: bold; text-align: center;">${poNumber}</td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <div style="border-bottom: 2px solid #1d3557; margin-bottom: 10px;"></div>
+
+                <!-- VENDOR & ATTENTION BOXES -->
+                <div style="display: table; width: 100%; table-layout: fixed; margin-bottom: 10px;">
+                    <div style="display: table-cell; width: 49%; vertical-align: top; padding-right: 2%;">
+                        <div style="background: #1d3557; color: white; padding: 3px 8px; font-weight: bold; font-size: 10px; margin-bottom: 4px;">VENDOR</div>
+                        <div style="font-size: 9.5px; font-weight: bold; line-height: 1.35; color: #000;">
+                            <div>${vendorName}</div>
+                            <div>${vendorStreet}</div>
+                            <div>${vendorCity}</div>
+                            <div>CR NO:${vendorCR}</div>
+                            <div>VAT NO:${vendorVAT}</div>
+                            <div>PHONE:${vendorPhone}</div>
+                            <div>E-MAIL:${vendorEmail}</div>
+                        </div>
+                    </div>
+                    <div style="display: table-cell; width: 49%; vertical-align: top;">
+                        <div style="background: #1d3557; color: white; padding: 3px 8px; font-weight: bold; font-size: 10px; margin-bottom: 4px;">ATTENTION</div>
+                        <div style="font-size: 9.5px; font-weight: bold; line-height: 1.35; color: #000;">
+                            <div>${attentionContact}</div>
+                            <div>${attentionAddr1}</div>
+                            <div>${attentionAddr2}</div>
+                            <div>PHONE :${attentionPhone}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- LINE ITEMS TABLE -->
+                <table style="width: 100%; border-collapse: collapse; margin-bottom: 0px; border: 1px solid #1e3a8a; table-layout: fixed;">
+                    <thead>
+                        <tr style="background: #1d3557; color: white; font-size: 9.5px;">
+                            <th style="border: 1px solid #1e3a8a; padding: 5px 4px; text-align: center; width: 8%;">ITEM #</th>
+                            <th style="border: 1px solid #1e3a8a; padding: 5px 8px; text-align: left; width: 48%;">DESCRIPTION</th>
+                            <th style="border: 1px solid #1e3a8a; padding: 5px 4px; text-align: center; width: 10%;">QTY</th>
+                            <th style="border: 1px solid #1e3a8a; padding: 5px 4px; text-align: center; width: 17%;">RATE HOURLY</th>
+                            <th style="border: 1px solid #1e3a8a; padding: 5px 8px; text-align: right; width: 17%;">TOTAL</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${itemsHTML}
+                    </tbody>
+                </table>
+
+                <!-- COMMENTS & CONDITIONS SECTION -->
+                <div style="border: 1px solid #1e3a8a; border-top: none; display: table; width: 100%; table-layout: fixed; margin-bottom: 30px;">
+                    <div style="display: table-cell; width: 75%; border-right: 1px solid #1e3a8a; padding: 5px 8px; vertical-align: top;">
+                        <div style="font-weight: bold; font-size: 10px; color: #000; margin-bottom: 4px;">Comments or Special Instructions</div>
+                        <div style="font-size: 9.5px; font-weight: bold; color: #000; line-height: 1.3;">
+                            <table style="width: 100%; border-collapse: collapse;">
+                                ${commentsHTML}
+                            </table>
+                        </div>
+                    </div>
+                    <div style="display: table-cell; width: 25%; vertical-align: top; position: relative;">
+                        <div style="padding: 4px; text-align: center; font-weight: bold; font-size: 10px;">-</div>
+                        <div style="padding: 4px; text-align: center; font-weight: bold; font-size: 10px;">-</div>
+                        <div style="padding: 4px; text-align: center; font-weight: bold; font-size: 10px;">-</div>
+                        <div style="background: #b0c4de; height: 16px; border-top: 1px solid #1e3a8a; margin-top: 40px;"></div>
+                    </div>
+                </div>
+
+                <!-- SIGNATURES SECTION WITH OVERLINE LINES -->
+                <div style="display: table; width: 100%; table-layout: fixed; margin-top: 45px; text-align: center;">
+                    <div style="display: table-cell; width: 33.33%; padding: 0 15px;">
+                        <div style="border-top: 1.5px solid #0f172a; padding-top: 4px; font-weight: bold; font-size: 10px; color: #0f172a; tracking-wider;">SIGNATURE</div>
+                    </div>
+                    <div style="display: table-cell; width: 33.33%; padding: 0 15px;">
+                        <div style="border-top: 1.5px solid #0f172a; padding-top: 4px; font-weight: bold; font-size: 10px; color: #0f172a; tracking-wider;">SIGNATURE</div>
+                    </div>
+                    <div style="display: table-cell; width: 33.33%; padding: 0 15px;">
+                        <div style="border-top: 1.5px solid #0f172a; padding-top: 4px; font-weight: bold; font-size: 10px; color: #0f172a; tracking-wider;">SIGNATURE</div>
+                    </div>
+                </div>
+
+                <!-- FOOTER -->
+                <div style="border-top: 2px solid #0d2346; padding-top: 4px; text-align: center; color: #334155; margin-top: 18px;">
+                    <div style="font-weight: bold; font-size: 8.5px; color: #0d2346; margin-bottom: 1px; direction: rtl; font-family: 'Amiri', 'Traditional Arabic', serif;">الجبيل &ndash; المنطقة الشرقية &ndash; جوال : ٠٥٠٣٥٦٤٠٠٧ &ndash; المملكة العربية السعودية</div>
+                    <div style="font-size: 8px; font-weight: 600; color: #334155; margin-bottom: 1px;">Jubail, Eastern Province - Mobile: +966 050 356 4007 - Kingdom of Saudi Arabia</div>
+                    <div style="font-size: 8px; font-weight: 600; color: #c59b27; font-weight: 700;">E-mail : masoud@kayidaljazeera.com</div>
+                </div>
+
+            </div>
+        `;
+
+        document.getElementById('pdfPreview').innerHTML = preview;
+    }
+
+    function openPreviewModal() {
+        const previewHTML = document.getElementById('pdfPreview').innerHTML;
+        document.getElementById('modalPdfContent').innerHTML = previewHTML;
+        document.getElementById('previewModal').classList.remove('hidden');
+    }
+
+    function closeModal() {
+        document.getElementById('previewModal').classList.add('hidden');
+    }
+
+    function downloadPDF() {
+        const element = document.getElementById('pdfPreview');
+        const poNum = document.getElementById('poNumber').value || '35HJ53';
+        const opt = {
+            margin:       [8, 8, 8, 8],
+            filename:     `PO_${poNum}.pdf`,
+            image:        { type: 'jpeg', quality: 0.98 },
+            html2canvas:  { scale: 2, useCORS: true, scrollX: 0, scrollY: 0 },
+            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+        };
+        html2pdf().set(opt).from(element).save().then(() => {
+            closeModal();
+        });
+    }
+
+    document.getElementById('addItemBtn').addEventListener('click', (e) => {
+        e.preventDefault();
+        addLineItem();
+    });
+
+    document.getElementById('addCommentBtn').addEventListener('click', (e) => {
+        e.preventDefault();
+        addComment();
+    });
+
+    document.getElementById('resetBtn').addEventListener('click', () => {
+        loadDefaultData();
+    });
+
+    document.getElementById('generatePdfBtn').addEventListener('click', openPreviewModal);
+    document.getElementById('topPrintBtn').addEventListener('click', openPreviewModal);
+
+    document.getElementById('closeModalBtn').addEventListener('click', closeModal);
+    document.getElementById('cancelModalBtn').addEventListener('click', closeModal);
+    document.getElementById('confirmDownloadBtn').addEventListener('click', downloadPDF);
+
+    document.querySelectorAll('#poForm input').forEach(input => {
+        input.addEventListener('input', updatePreview);
+    });
+
+    loadDefaultData();
+</script>
+</body>
+</html>

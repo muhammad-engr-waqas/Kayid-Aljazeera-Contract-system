@@ -1,0 +1,1359 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VAT Invoice & Timesheet Editor - ZATCA Compliant</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Amiri:wght@400;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f1f5f9;
+        }
+        .arabic-text {
+            font-family: 'Amiri', serif;
+        }
+        .section-card {
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 18px;
+            margin-bottom: 16px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+        }
+        .section-title {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.05em;
+            color: #334155;
+            text-transform: uppercase;
+        }
+        .form-label {
+            display: block;
+            font-size: 9.5px;
+            font-weight: 700;
+            letter-spacing: 0.04em;
+            color: #64748b;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+        .form-input {
+            width: 100%;
+            padding: 7px 10px;
+            background-color: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 11.5px;
+            font-weight: 600;
+            color: #0f172a;
+            outline: none;
+            transition: all 0.15s ease;
+        }
+        .form-input:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+        }
+        .btn-blue {
+            background-color: #2563eb;
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 11.5px;
+            padding: 8px 16px;
+            border-radius: 6px;
+            transition: background-color 0.15s ease;
+        }
+        .btn-blue:hover {
+            background-color: #1d4ed8;
+        }
+        .btn-light-blue {
+            background-color: #eff6ff;
+            color: #2563eb;
+            font-weight: 700;
+            font-size: 10.5px;
+            padding: 5px 10px;
+            border-radius: 5px;
+            border: 1px solid #dbeafe;
+            transition: all 0.15s ease;
+        }
+        .btn-light-blue:hover {
+            background-color: #dbeafe;
+        }
+        .btn-ghost {
+            background-color: transparent;
+            color: #64748b;
+            font-size: 11.5px;
+            font-weight: 600;
+            padding: 6px 12px;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+        }
+        .btn-ghost:hover {
+            background-color: #f8fafc;
+            color: #0f172a;
+        }
+
+        /* Nav Pills Styling */
+        .nav-pill {
+            padding: 6px 16px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 700;
+            color: #475569;
+            background-color: #ffffff;
+            border: 1px solid #cbd5e1;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .nav-pill.active {
+            background-color: #1e293b;
+            color: #ffffff;
+            border-color: #1e293b;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        /* Strict PDF Page Formatting */
+        .pdf-page {
+            width: 210mm;
+            min-height: 297mm;
+            box-sizing: border-box;
+            background: #ffffff;
+            margin: 0 auto 20px auto;
+            padding: 10mm 10mm;
+            font-family: Arial, Helvetica, sans-serif;
+            position: relative;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        
+        .zatca-table, .zatca-table th, .zatca-table td {
+            border: 1px solid #000000;
+            border-collapse: collapse;
+        }
+
+        /* QR Code Container & Media Styling */
+        #zatcaQrCodeBox {
+            width: 56px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: visible;
+        }
+
+        #zatcaQrCodeBox canvas,
+        #zatcaQrCodeBox img {
+            width: 56px !important;
+            height: 56px !important;
+            max-width: 56px !important;
+            max-height: 56px !important;
+            display: block !important;
+            visibility: visible !important;
+            opacity: 1 !important;
+            image-rendering: -webkit-optimize-contrast;
+            image-rendering: pixelated;
+            margin: 0 auto !important;
+        }
+
+        /* Print Media Styles */
+        @media print {
+            @page { margin: 0; size: A4 portrait; }
+
+            body > *:not(#__printArea__) {
+                display: none !important;
+            }
+
+            body {
+                margin: 0 !important;
+                padding: 0 !important;
+                background: white !important;
+            }
+
+            #__printArea__ {
+                display: block !important;
+                position: static !important;
+                width: 210mm !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                background: white !important;
+            }
+
+            .pdf-page {
+                display: block !important;
+                box-shadow: none !important;
+                margin: 0 !important;
+                padding: 10mm 10mm !important;
+                width: 210mm !important;
+                min-height: 297mm !important;
+                background: white !important;
+                color: black !important;
+            }
+
+            .pdf-page + .pdf-page {
+                page-break-before: always !important;
+                break-before: page !important;
+            }
+
+            .pdf-page:last-child {
+                page-break-after: avoid !important;
+                break-after: avoid !important;
+            }
+
+            #zatcaQrCodeBox {
+                display: flex !important;
+                visibility: visible !important;
+                overflow: visible !important;
+            }
+
+            #zatcaQrCodeBox img {
+                width: 56px !important;
+                height: 56px !important;
+                display: block !important;
+                visibility: visible !important;
+                opacity: 1 !important;
+                image-rendering: pixelated !important;
+                margin: 0 auto !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="min-h-screen p-3 md:p-6">
+    <div class="max-w-[1700px] mx-auto">
+        
+        <!-- HEADER TOP BAR -->
+        <div class="bg-white border border-slate-200 rounded-xl p-4 mb-5 flex flex-wrap justify-between items-center shadow-sm">
+            <div>
+                <h1 class="text-xs font-extrabold tracking-wider text-slate-800 uppercase">VAT INVOICE & TIMESHEET EDITOR</h1>
+                <p class="text-[11px] text-slate-500 font-medium">ZATCA Tax Compliant (KAYID ALJAZEERA Format)</p>
+            </div>
+            <div class="flex items-center gap-3 mt-2 sm:mt-0">
+                <a href="index.html" class="btn-ghost inline-flex items-center gap-1.5 no-underline">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    <span>Dashboard</span>
+                </a>
+                <button type="button" id="resetBtn" class="btn-ghost">Reset</button>
+                <button type="button" id="topPrintBtn" class="btn-blue">Print / Save PDF</button>
+            </div>
+        </div>
+
+        <!-- MAIN SPLIT LAYOUT -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+            
+            <!-- LEFT EDITOR COLUMN -->
+            <div class="max-h-[88vh] overflow-y-auto pr-1">
+                <form id="invoiceForm">
+                    
+                    <!-- 00 · COMPANY / ISSUER INFO -->
+                    <div class="section-card border-l-4 border-l-[#c59b27]">
+                        <div class="section-title mb-3">00 · COMPANY / ISSUER INFO</div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+                            <div>
+                                <label class="form-label">COMPANY NAME (EN)</label>
+                                <input type="text" id="coNameEn" class="form-input" value="KAYID ALJAZEERA COMPANY">
+                            </div>
+                            <div>
+                                <label class="form-label text-right">اسم الشركة (AR)</label>
+                                <input type="text" id="coNameAr" class="form-input text-right arabic-text" value="شركة كايد الجزيرة">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">SUB-TITLE / TYPE</label>
+                            <input type="text" id="coSubTitle" class="form-input" value="CONTRACTING COMPANY LLC · KSA">
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+                            <div>
+                                <label class="form-label">C.R. NUMBER</label>
+                                <input type="text" id="coCr" class="form-input" value="7052038558">
+                            </div>
+                            <div>
+                                <label class="form-label">COMPANY VAT NO</label>
+                                <input type="text" id="coVat" class="form-input" value="315035698500003">
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">ADDRESS</label>
+                            <input type="text" id="coAddress" class="form-input" value="Jubail, Eastern Province, Kingdom of Saudi Arabia">
+                        </div>
+                        <div>
+                            <label class="form-label">PHONE NUMBER</label>
+                            <input type="text" id="coPhone" class="form-input" value="+966 050 356 4007">
+                        </div>
+                    </div>
+
+                    <!-- 01 · INVOICE REFERENCE & DATES -->
+                    <div class="section-card">
+                        <div class="section-title mb-3">01 · INVOICE REFERENCE & DATES</div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+                            <div>
+                                <label class="form-label">INVOICE NO <span class="arabic-text text-slate-400">(رقم الفاتورة)</span></label>
+                                <input type="text" id="invoiceNo" class="form-input" value="MONA-22295">
+                            </div>
+                            <div>
+                                <label class="form-label">VAT NUMBER <span class="arabic-text text-slate-400">(رقم ضريبي)</span></label>
+                                <input type="text" id="vatNumber" class="form-input" value="300396778800003">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-3 gap-3 mb-3">
+                            <div>
+                                <label class="form-label">INVOICE DATE</label>
+                                <input type="text" id="invoiceDate" class="form-input" value="13/08/2026">
+                            </div>
+                            <div>
+                                <label class="form-label">SUPPLY DATE</label>
+                                <input type="text" id="supplyDate" class="form-input" value="13/08/2026">
+                            </div>
+                            <div>
+                                <label class="form-label">DUE DATE</label>
+                                <input type="text" id="dueDate" class="form-input" value="23/08/2026">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="form-label">CONTRACT / PO NO</label>
+                                <input type="text" id="contractPo" class="form-input" value="35H353">
+                            </div>
+                            <div>
+                                <label class="form-label">PROJECT / REF NO</label>
+                                <input type="text" id="projectRef" class="form-input" value="JAFURAH">
+                            </div>
+                        </div>
+
+                        <div class="mt-3">
+                            <label class="form-label">INVOICE PERIOD</label>
+                            <div class="grid grid-cols-2 gap-3">
+                                <input type="text" id="periodStart" class="form-input" value="01/07/2026">
+                                <input type="text" id="periodEnd" class="form-input" value="31/07/2026">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 02 · BUYER DETAILS -->
+                    <div class="section-card">
+                        <div class="section-title mb-3">02 · BUYER DETAILS (BILINGUAL)</div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+                            <div>
+                                <label class="form-label">CUSTOMER NAME (EN)</label>
+                                <input type="text" id="buyerNameEn" class="form-input" value="KAYID ALJAZEERA COMPANY">
+                            </div>
+                            <div>
+                                <label class="form-label text-right">اسم العميل (AR)</label>
+                                <input type="text" id="buyerNameAr" class="form-input text-right arabic-text" value="شركة كايد الجزيرة">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3 mb-3">
+                            <div>
+                                <label class="form-label">BUILDING NO</label>
+                                <input type="text" id="buyerBuilding" class="form-input" value="3053">
+                            </div>
+                            <div>
+                                <label class="form-label">STREET NAME</label>
+                                <input type="text" id="buyerStreet" class="form-input" value="Eleventh">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3 mb-3">
+                            <div>
+                                <label class="form-label">CITY</label>
+                                <input type="text" id="buyerCity" class="form-input" value="AL KHOBAR">
+                            </div>
+                            <div>
+                                <label class="form-label">DISTRICT</label>
+                                <input type="text" id="buyerDistrict" class="form-input" value="Al Khubar Ash Shamaliyah">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-3 gap-3">
+                            <div>
+                                <label class="form-label">POSTAL CODE</label>
+                                <input type="text" id="buyerPostal" class="form-input" value="34428">
+                            </div>
+                            <div>
+                                <label class="form-label">CR NUMBER</label>
+                                <input type="text" id="buyerCr" class="form-input" value="7052038598">
+                            </div>
+                            <div>
+                                <label class="form-label">VAT NUMBER</label>
+                                <input type="text" id="buyerVat" class="form-input" value="315035698500003">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 03 · INVOICE LINE ITEMS -->
+                    <div class="section-card">
+                        <div class="flex justify-between items-center mb-3">
+                            <div class="section-title" id="lineItemTitle">03 · INVOICE LINE ITEMS (1)</div>
+                            <button type="button" id="addLineItemBtn" class="btn-light-blue">+ Add Item</button>
+                        </div>
+
+                        <div id="lineItemsContainer" class="space-y-2"></div>
+
+                        <!-- TOTALS SUMMARY BAR -->
+                        <div class="mt-4 p-3 bg-slate-50 border border-slate-200 rounded-lg flex flex-wrap justify-between items-center text-xs font-bold text-slate-700">
+                            <div>Subtotal: <span id="summarySubtotal" class="text-blue-700">1,080.00 SAR</span></div>
+                            <div>VAT (15%): <span id="summaryVat" class="text-blue-700">162.00 SAR</span></div>
+                            <div class="text-sm">Total: <span id="summaryTotal" class="text-blue-800 font-extrabold">1,242.00 SAR</span></div>
+                        </div>
+                    </div>
+
+                    <!-- 04 · SUMMARY SHEET & TIMESHEET -->
+                    <div class="section-card border-l-4 border-l-blue-600">
+                        <div class="flex justify-between items-center mb-2">
+                            <div class="section-title">04 · SUMMARY SHEET & TIMESHEET</div>
+                            <div class="flex items-center gap-3">
+                                <label class="flex items-center gap-1.5 cursor-pointer text-xs font-bold text-slate-800">
+                                    <input type="checkbox" id="includePage2Checkbox" checked class="w-4 h-4 rounded text-blue-600 focus:ring-blue-500">
+                                    Include Page 2
+                                </label>
+                                <button type="button" id="syncItemsBtn" class="btn-light-blue text-[10px]">Sync to Line Items</button>
+                            </div>
+                        </div>
+
+                        <div id="timesheetFieldsSection" class="mt-3">
+                            <div class="text-[11px] text-slate-500 font-semibold mb-2" id="workerCountText">Worker list (3 records)</div>
+                            <div id="workersContainer" class="space-y-2"></div>
+                            
+                            <button type="button" id="addWorkerBtn" class="btn-light-blue mt-3 w-full justify-center">+ Add Worker</button>
+
+                            <div class="mt-3 p-2.5 bg-slate-100 rounded text-xs font-semibold text-slate-600 flex justify-between">
+                                <div>Total Hours: <span id="totalHoursDisp" class="font-bold text-slate-900">120 hrs</span></div>
+                                <div>Timesheet: <span id="timesheetTotalDisp" class="font-bold text-slate-900">SAR 1080.00 (+VAT: SAR 1242.00)</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 05 · BANK DETAILS & OFFICIAL STAMP -->
+                    <div class="section-card">
+                        <div class="flex justify-between items-center mb-3">
+                            <div class="section-title">05 · BANK DETAILS</div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3 mb-3">
+                            <div>
+                                <label class="form-label">BANK NAME</label>
+                                <input type="text" id="bankName" class="form-input" value="SAB">
+                            </div>
+                            <div>
+                                <label class="form-label">BRANCH</label>
+                                <input type="text" id="bankBranch" class="form-input" value="Al Jubail">
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="form-label">ACCOUNT NUMBER</label>
+                                <input type="text" id="bankAccount" class="form-input" value="242354728002">
+                            </div>
+                            <div>
+                                <label class="form-label">IBAN NUMBER</label>
+                                <input type="text" id="bankIban" class="form-input" value="SA8145000000242354728002">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SUBMIT BUTTON -->
+                    <div class="mt-5 mb-8">
+                        <button type="button" id="bottomGenerateBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-extrabold py-3.5 px-4 rounded-xl shadow-lg transition-all text-xs tracking-wider uppercase">
+                            GENERATE & PRINT OFFICIAL INVOICE <span id="btnPageCountText">(2 PAGES)</span>
+                        </button>
+                    </div>
+
+                </form>
+            </div>
+
+            <!-- RIGHT LIVE PREVIEW COLUMN -->
+            <div class="bg-slate-300/70 p-4 md:p-6 rounded-2xl border border-slate-300 min-h-[88vh] flex flex-col items-center">
+                
+                <!-- TOP PAGE SWITCH TABS -->
+                <div class="bg-slate-200/90 p-1.5 rounded-xl border border-slate-300 shadow-sm mb-5 flex items-center gap-2" id="navTabsContainer">
+                    <button type="button" class="nav-pill active" id="tabAllPages" onclick="switchPreviewTab('all')">All Pages</button>
+                    <button type="button" class="nav-pill" id="tabPage1" onclick="switchPreviewTab('page1')">Page 1 (VAT Invoice)</button>
+                    <button type="button" class="nav-pill" id="tabPage2" onclick="switchPreviewTab('page2')">Page 2 (Timesheet)</button>
+                </div>
+
+                <!-- PREVIEW WRAPPER CONTAINER -->
+                <div id="previewRenderArea" class="w-full flex flex-col items-center overflow-x-auto">
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    let activeTab = 'all'; 
+
+    // INITIALIZATION & EVENT LISTENERS
+    document.addEventListener('DOMContentLoaded', () => {
+        setupEventListeners();
+        loadInitialData();
+    });
+
+    function setupEventListeners() {
+        document.querySelectorAll('#invoiceForm input:not([type="checkbox"])').forEach(input => {
+            input.addEventListener('input', updateRender);
+        });
+
+        document.getElementById('includePage2Checkbox').addEventListener('change', (e) => {
+            const isChecked = e.target.checked;
+            const fieldsSec = document.getElementById('timesheetFieldsSection');
+            const tab2Btn = document.getElementById('tabPage2');
+            const btnText = document.getElementById('btnPageCountText');
+
+            if (isChecked) {
+                fieldsSec.style.display = 'block';
+                tab2Btn.style.display = 'inline-block';
+                btnText.textContent = '(2 PAGES)';
+            } else {
+                fieldsSec.style.display = 'none';
+                tab2Btn.style.display = 'none';
+                btnText.textContent = '(1 PAGE)';
+                if (activeTab === 'page2') {
+                    switchPreviewTab('all');
+                }
+            }
+            updateRender();
+        });
+
+        document.getElementById('includeStampCheckbox') && document.getElementById('includeStampCheckbox').addEventListener('change', updateRender);
+        document.getElementById('addLineItemBtn').addEventListener('click', () => addLineItemRow());
+        document.getElementById('addWorkerBtn').addEventListener('click', () => addWorkerRow());
+        document.getElementById('syncItemsBtn').addEventListener('click', syncWorkersToLineItems);
+        document.getElementById('resetBtn').addEventListener('click', loadInitialData);
+        document.getElementById('topPrintBtn').addEventListener('click', printPDF);
+        document.getElementById('bottomGenerateBtn').addEventListener('click', printPDF);
+    }
+
+    function loadInitialData() {
+        document.getElementById('lineItemsContainer').innerHTML = '';
+        document.getElementById('workersContainer').innerHTML = '';
+
+        // Default Line Item
+        addLineItemRow('HELPER', 'hr', '120.00', '9.00');
+
+        // Default Workers
+        addWorkerRow('JAKIR KHAN', 'HELPER', '40.00', '9.00');
+        addWorkerRow('FARUK SEKANDAR ALI', 'HELPER', '40.00', '9.00');
+        addWorkerRow('RUBEL HOSSAIN', 'HELPER', '40.00', '9.00');
+
+        document.getElementById('includePage2Checkbox').checked = true;
+        
+        switchPreviewTab('all');
+        updateRender();
+    }
+
+    // LINE ITEM ROW HANDLERS
+    function addLineItemRow(desc = '', unit = 'hr', qty = '', price = '') {
+        const container = document.getElementById('lineItemsContainer');
+        const row = document.createElement('div');
+        row.className = 'grid grid-cols-12 gap-2 items-center line-item-row bg-white p-1.5 border border-slate-200 rounded';
+
+        row.innerHTML = `
+            <div class="col-span-5">
+                <input type="text" placeholder="Description" value="${desc}" class="form-input item-desc">
+            </div>
+            <div class="col-span-2">
+                <input type="text" placeholder="Unit" value="${unit}" class="form-input text-center item-unit">
+            </div>
+            <div class="col-span-2">
+                <input type="text" placeholder="Qty" value="${qty}" class="form-input text-center item-qty">
+            </div>
+            <div class="col-span-2">
+                <input type="text" placeholder="Price" value="${price}" class="form-input text-center item-price">
+            </div>
+            <div class="col-span-1 text-center">
+                <button type="button" class="remove-line text-slate-400 hover:text-red-500 font-bold text-base">×</button>
+            </div>
+        `;
+
+        row.querySelectorAll('input').forEach(i => i.addEventListener('input', updateRender));
+        row.querySelector('.remove-line').addEventListener('click', () => {
+            row.remove();
+            updateRender();
+        });
+
+        container.appendChild(row);
+        updateRender();
+    }
+
+    // WORKER ROW HANDLERS
+    function addWorkerRow(name = '', trade = 'HELPER', hours = '', rate = '') {
+        const container = document.getElementById('workersContainer');
+        const row = document.createElement('div');
+        row.className = 'grid grid-cols-12 gap-2 items-center worker-row bg-white p-1.5 border border-slate-200 rounded';
+
+        row.innerHTML = `
+            <div class="col-span-4">
+                <input type="text" placeholder="Worker Name" value="${name}" class="form-input worker-name">
+            </div>
+            <div class="col-span-3">
+                <input type="text" placeholder="Trade" value="${trade}" class="form-input worker-trade">
+            </div>
+            <div class="col-span-2">
+                <input type="text" placeholder="Hours" value="${hours}" class="form-input text-center worker-hours">
+            </div>
+            <div class="col-span-2">
+                <input type="text" placeholder="Rate" value="${rate}" class="form-input text-center worker-rate">
+            </div>
+            <div class="col-span-1 text-center">
+                <button type="button" class="remove-worker text-slate-400 hover:text-red-500 font-bold text-base">×</button>
+            </div>
+        `;
+
+        row.querySelectorAll('input').forEach(i => i.addEventListener('input', updateRender));
+        row.querySelector('.remove-worker').addEventListener('click', () => {
+            row.remove();
+            updateRender();
+        });
+
+        container.appendChild(row);
+        updateRender();
+    }
+
+    function syncWorkersToLineItems() {
+        const workerRows = document.querySelectorAll('.worker-row');
+        let totalHrs = 0;
+        let sampleRate = 0;
+        let tradeName = 'HELPER';
+
+        workerRows.forEach(row => {
+            totalHrs += parseFloat(row.querySelector('.worker-hours').value) || 0;
+            sampleRate = parseFloat(row.querySelector('.worker-rate').value) || sampleRate;
+            tradeName = row.querySelector('.worker-trade').value || tradeName;
+        });
+
+        document.getElementById('lineItemsContainer').innerHTML = '';
+        addLineItemRow(tradeName, 'hr', totalHrs.toFixed(2), sampleRate.toFixed(2));
+    }
+
+    function switchPreviewTab(tab) {
+        activeTab = tab;
+        document.querySelectorAll('.nav-pill').forEach(btn => btn.classList.remove('active'));
+        if(tab === 'all') document.getElementById('tabAllPages').classList.add('active');
+        if(tab === 'page1') document.getElementById('tabPage1').classList.add('active');
+        if(tab === 'page2') document.getElementById('tabPage2').classList.add('active');
+        updateRender();
+    }
+
+    // ZATCA E-INVOICE PHASE 1 (TLV ENCODING)
+    function getTlvBytes(tagNumber, valueString) {
+        const encoder = new TextEncoder();
+        const valueBuffer = encoder.encode(valueString);
+        const combined = new Uint8Array(2 + valueBuffer.length);
+        combined[0] = tagNumber;
+        combined[1] = valueBuffer.length;
+        combined.set(valueBuffer, 2);
+        return combined;
+    }
+
+    function formatZatcaTimestamp(dateStr) {
+        if (!dateStr) return new Date().toISOString().split('.')[0] + 'Z';
+        dateStr = dateStr.trim();
+        const dmyMatch = dateStr.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);
+        if (dmyMatch) {
+            const day = dmyMatch[1].padStart(2, '0');
+            const month = dmyMatch[2].padStart(2, '0');
+            const year = dmyMatch[3];
+            return `${year}-${month}-${day}T12:00:00Z`;
+        }
+        const ymdMatch = dateStr.match(/^(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})/);
+        if (ymdMatch) {
+            const year = ymdMatch[1];
+            const month = ymdMatch[2].padStart(2, '0');
+            const day = ymdMatch[3].padStart(2, '0');
+            return `${year}-${month}-${day}T12:00:00Z`;
+        }
+        try {
+            const d = new Date(dateStr);
+            if (!isNaN(d.getTime())) return d.toISOString().split('.')[0] + 'Z';
+        } catch(e) {}
+        return new Date().toISOString().split('.')[0] + 'Z';
+    }
+
+    function generateZatcaTLVBase64(sellerName, vatNumber, timestamp, totalAmount, vatAmount) {
+        const tlv1 = getTlvBytes(1, sellerName || 'KAYID ALJAZEERA COMPANY');
+        const tlv2 = getTlvBytes(2, vatNumber || '315035698500003');
+        const tlv3 = getTlvBytes(3, timestamp);
+        const tlv4 = getTlvBytes(4, parseFloat(totalAmount || 0).toFixed(2));
+        const tlv5 = getTlvBytes(5, parseFloat(vatAmount || 0).toFixed(2));
+
+        const totalLen = tlv1.length + tlv2.length + tlv3.length + tlv4.length + tlv5.length;
+        const fullTlvBuffer = new Uint8Array(totalLen);
+        let offset = 0;
+        [tlv1, tlv2, tlv3, tlv4, tlv5].forEach(buf => {
+            fullTlvBuffer.set(buf, offset);
+            offset += buf.length;
+        });
+
+        let binary = '';
+        for (let i = 0; i < fullTlvBuffer.length; i++) {
+            binary += String.fromCharCode(fullTlvBuffer[i]);
+        }
+        return btoa(binary);
+    }
+
+    // MAIN RENDER ENGINE
+    function updateRender() {
+        const includePage2 = document.getElementById('includePage2Checkbox').checked;
+
+        // Company Info
+        const coNameEn = document.getElementById('coNameEn').value || 'KAYID ALJAZEERA COMPANY';
+        const coNameAr = document.getElementById('coNameAr').value || 'شركة كايد الجزيرة';
+        const coSubTitle = document.getElementById('coSubTitle').value || 'CONTRACTING COMPANY LLC · KSA';
+        const coCr = document.getElementById('coCr').value || '7052038558';
+        const coVat = document.getElementById('coVat').value || '315035698500003';
+        const coAddress = document.getElementById('coAddress').value || 'Jubail, Eastern Province, Kingdom of Saudi Arabia';
+        const coPhone = document.getElementById('coPhone').value || '+966 050 356 4007';
+
+        // Form Calculations
+        let subtotal = 0;
+        const lineRows = document.querySelectorAll('.line-item-row');
+        document.getElementById('lineItemTitle').textContent = `03 · INVOICE LINE ITEMS (${lineRows.length})`;
+
+        let lineTableRowsHTML = '';
+        lineRows.forEach((row, index) => {
+            const desc = row.querySelector('.item-desc').value || '';
+            const unit = row.querySelector('.item-unit').value || '';
+            const qty = parseFloat(row.querySelector('.item-qty').value) || 0;
+            const price = parseFloat(row.querySelector('.item-price').value) || 0;
+            const amount = qty * price;
+            const vatAmt = amount * 0.15;
+            const totalWithVat = amount + vatAmt;
+
+            subtotal += amount;
+
+            lineTableRowsHTML += `
+                <tr style="height: 22px; text-align: center; font-size: 8.5px; font-weight: 600;">
+                    <td style="border: 1px solid #000;">${index + 1}</td>
+                    <td style="border: 1px solid #000; text-align: left; padding-left: 6px; font-weight: bold;">${desc}</td>
+                    <td style="border: 1px solid #000;">${unit}</td>
+                    <td style="border: 1px solid #000;">${qty.toFixed(2)}</td>
+                    <td style="border: 1px solid #000;">${price.toFixed(2)}</td>
+                    <td style="border: 1px solid #000;">0.00</td>
+                    <td style="border: 1px solid #000;">${amount.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                    <td style="border: 1px solid #000;">${vatAmt.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                    <td style="border: 1px solid #000; font-weight: bold;">${totalWithVat.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+                </tr>
+            `;
+        });
+
+        const vatTotal = subtotal * 0.15;
+        const grandTotal = subtotal + vatTotal;
+
+        document.getElementById('summarySubtotal').textContent = `${subtotal.toLocaleString('en-US', {minimumFractionDigits: 2})} SAR`;
+        document.getElementById('summaryVat').textContent = `${vatTotal.toLocaleString('en-US', {minimumFractionDigits: 2})} SAR`;
+        document.getElementById('summaryTotal').textContent = `${grandTotal.toLocaleString('en-US', {minimumFractionDigits: 2})} SAR`;
+
+        // Workers Calculations
+        let totalWorkerHours = 0;
+        let workerTableRowsHTML = '';
+        const workerRows = document.querySelectorAll('.worker-row');
+        document.getElementById('workerCountText').textContent = `Worker list (${workerRows.length} records)`;
+
+        workerRows.forEach((row, index) => {
+            const name = row.querySelector('.worker-name').value.toUpperCase() || '';
+            const trade = row.querySelector('.worker-trade').value.toUpperCase() || '';
+            const hrs = parseFloat(row.querySelector('.worker-hours').value) || 0;
+            const rate = parseFloat(row.querySelector('.worker-rate').value) || 0;
+            const amount = hrs * rate;
+            totalWorkerHours += hrs;
+
+            workerTableRowsHTML += `
+                <tr style="height: 24px; text-align: center; font-size: 8.5px; font-weight: bold;">
+                    <td style="border: 1px solid #000;">${index + 1}</td>
+                    <td style="border: 1px solid #000; text-align: left; padding-left: 10px;">${name}</td>
+                    <td style="border: 1px solid #000;">${trade}</td>
+                    <td style="border: 1px solid #000;">${hrs.toFixed(2)}</td>
+                    <td style="border: 1px solid #000;">${rate.toFixed(2)}</td>
+                    <td style="border: 1px solid #000; padding-right: 8px; text-align: right;">SAR ${amount.toFixed(2)}</td>
+                </tr>
+            `;
+        });
+
+        document.getElementById('totalHoursDisp').textContent = `${totalWorkerHours.toFixed(0)} hrs`;
+        document.getElementById('timesheetTotalDisp').textContent = `Timesheet: SAR ${subtotal.toFixed(2)} (+VAT: SAR ${grandTotal.toFixed(2)})`;
+
+        // Dynamic Elements Setup
+        const stampHTML = ''; // Stamp removed
+
+        // PAGE 1 HTML TEMPLATE
+        const page1HTML = `
+            <div class="pdf-page" id="pdfPage1">
+                <!-- HEADER TOP -->
+                <div style="display: table; width: 100%; margin-bottom: 6px;">
+                    <div style="display: table-cell; vertical-align: top; width: 55%;">
+                        <div style="display: table;">
+                            <div style="display: table-cell; vertical-align: top; padding-right: 8px;">
+                                <div style="width: 52px; height: 52px;">
+                                    <img src="data:image/png;base64,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" style="width:50px;height:50px;object-fit:contain;" />
+                                </div>
+                            </div>
+                            <div style="display: table-cell; vertical-align: top;">
+                                <div style="font-weight: 800; font-size: 13px; color: #0d2346; tracking-tight;">${coNameEn}</div>
+                                <div style="color: #334155; font-size: 8px; font-weight: 700;">${coSubTitle}</div>
+                                <div style="font-size: 7.5px; color: #64748b; font-weight: 600;">C.R.: ${coCr} | VAT: ${coVat}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="display: table-cell; vertical-align: top; text-align: right; width: 45%;">
+                        <div class="arabic-text" style="font-weight: bold; font-size: 14px; color: #0d2346;">شركة كايد الجزيرة</div>
+                        <div style="font-size: 7.5px; color: #475569; line-height: 1.2;">
+                            Jubail, Eastern Province, Kingdom of Saudi Arabia<br>+966 050 356 4007
+                        </div>
+                    </div>
+                </div>
+
+                <!-- VAT INVOICE BANNER -->
+                <div style="background: #1e3a8a; color: white; text-align: center; font-weight: 800; font-size: 11px; padding: 3px 0; margin-bottom: 4px;">
+                    فاتورة ضريبية / VAT INVOICE
+                </div>
+
+                <!-- TOP META ROW -->
+                <div style="display: table; width: 100%; font-size: 8px; font-weight: 800; margin-bottom: 4px;">
+                    <div style="display: table-cell; text-align: left;">
+                        Invoice No : ${document.getElementById('invoiceNo').value} <span class="arabic-text">رقم الفاتورة</span>
+                    </div>
+                    <div style="display: table-cell; text-align: right;">
+                        VAT Number : ${document.getElementById('vatNumber').value} <span class="arabic-text">رقم ضريبي</span>
+                    </div>
+                </div>
+
+                <!-- BILINGUAL BUYER TABLE -->
+                <table class="zatca-table" style="width: 100%; font-size: 7.5px; margin-bottom: 6px;">
+                    <tr>
+                        <td style="width: 15%; font-weight: bold; padding: 2px 4px;">To :</td>
+                        <td style="width: 42.5%; font-weight: bold; padding: 2px 4px;">${document.getElementById('buyerNameEn').value}</td>
+                        <td class="arabic-text" style="width: 27.5%; text-align: right; padding: 2px 4px;">الاسم</td>
+                        <td class="arabic-text" style="width: 15%; text-align: right; font-weight: bold; padding: 2px 4px;">إلى :</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold; padding: 2px 4px;">Street Name</td>
+                        <td style="padding: 2px 4px;">${document.getElementById('buyerStreet').value}</td>
+                        <td class="arabic-text" style="text-align: right; padding: 2px 4px;">اسم الشارع</td>
+                        <td class="arabic-text" style="text-align: right; padding: 2px 4px;">${document.getElementById('buyerNameAr').value}</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold; padding: 2px 4px;">Building No</td>
+                        <td style="padding: 2px 4px;">${document.getElementById('buyerBuilding').value} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; City: <b>${document.getElementById('buyerCity').value}</b></td>
+                        <td class="arabic-text" style="text-align: right; padding: 2px 4px;">رقم المبنى / المدينة</td>
+                        <td class="arabic-text" style="text-align: right; padding: 2px 4px;">٣٠٥٣ &nbsp;&nbsp;&nbsp;&nbsp; مدينة</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold; padding: 2px 4px;">Addl. No</td>
+                        <td style="padding: 2px 4px;">7197 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; District: <b>${document.getElementById('buyerDistrict').value}</b></td>
+                        <td class="arabic-text" style="text-align: right; padding: 2px 4px;">رقم إضافي / الحي</td>
+                        <td class="arabic-text" style="text-align: right; padding: 2px 4px;">٧١٩٧ &nbsp;&nbsp;&nbsp;&nbsp; الخبر الشمالية</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold; padding: 2px 4px;">Postal Code</td>
+                        <td style="padding: 2px 4px;">${document.getElementById('buyerPostal').value} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Country: <b>Saudi Arabia</b></td>
+                        <td class="arabic-text" style="text-align: right; padding: 2px 4px;">رمز بريدي / البلد</td>
+                        <td class="arabic-text" style="text-align: right; padding: 2px 4px;">٣٤٤٢٨ &nbsp;&nbsp;&nbsp;&nbsp; العربية السعودية</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: bold; padding: 2px 4px;">VAT Number</td>
+                        <td style="padding: 2px 4px;">${document.getElementById('buyerVat').value} &nbsp;&nbsp;&nbsp;&nbsp; CRN: <b>${document.getElementById('buyerCr').value}</b></td>
+                        <td class="arabic-text" style="text-align: right; padding: 2px 4px;">رقم ضريبي / السجل التجاري</td>
+                        <td class="arabic-text" style="text-align: right; padding: 2px 4px;">٣١٤٢٩٩٢٥٢٤٠٠٠٠٣</td>
+                    </tr>
+                </table>
+
+                <!-- DATES BLOCK TABLE -->
+                <table class="zatca-table" style="width: 100%; font-size: 7px; text-align: center; margin-bottom: 6px;">
+                    <tr style="background: #f8fafc; font-weight: bold;">
+                        <td style="width: 16.6%;">Invoice Date<br><span class="arabic-text">تاريخ الفاتورة</span></td>
+                        <td style="width: 16.6%;">Supply Date<br><span class="arabic-text">تاريخ التوريد</span></td>
+                        <td style="width: 16.6%;">Contract / PO No<br><span class="arabic-text">رقم أمر الشراء</span></td>
+                        <td style="width: 16.6%;">Due Date<br><span class="arabic-text">تاريخ الاستحقاق</span></td>
+                        <td style="width: 16.6%;">Invoice Period<br><span class="arabic-text">فترة الفاتورة</span></td>
+                        <td style="width: 17%;">Project / Reference No<br><span class="arabic-text">رقم المرجع</span></td>
+                    </tr>
+                    <tr style="font-weight: bold; font-size: 8px;">
+                        <td>${document.getElementById('invoiceDate').value}</td>
+                        <td>${document.getElementById('supplyDate').value}</td>
+                        <td>${document.getElementById('contractPo').value}</td>
+                        <td>${document.getElementById('dueDate').value}</td>
+                        <td>${document.getElementById('periodStart').value} - ${document.getElementById('periodEnd').value}</td>
+                        <td>${document.getElementById('projectRef').value}</td>
+                    </tr>
+                </table>
+
+                <!-- LINE ITEMS TABLE -->
+                <table class="zatca-table" style="width: 100%; margin-bottom: 6px;">
+                    <thead>
+                        <tr style="background: #f1f5f9; font-size: 7px; text-align: center; font-weight: bold;">
+                            <th style="width: 4%;">#<br><span class="arabic-text">م</span></th>
+                            <th style="width: 32%;">Description<br><span class="arabic-text">الوصف</span></th>
+                            <th style="width: 8%;">Unit<br><span class="arabic-text">الوحدة</span></th>
+                            <th style="width: 9%;">QTY<br><span class="arabic-text">الكمية</span></th>
+                            <th style="width: 9%;">Price<br><span class="arabic-text">السعر</span></th>
+                            <th style="width: 9%;">Discount<br><span class="arabic-text">خصومات</span></th>
+                            <th style="width: 9.5%;">Amount<br><span class="arabic-text">المبلغ</span></th>
+                            <th style="width: 9.5%;">VAT Amount<br><span class="arabic-text">قيمة الضريبة</span></th>
+                            <th style="width: 10%;">Amount Incl. VAT<br><span class="arabic-text">المبلغ الإجمالي</span></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${lineTableRowsHTML}
+                    </tbody>
+                </table>
+
+                <!-- SUMMARY CALCULATIONS TABLE -->
+                <table class="zatca-table" style="width: 100%; font-size: 7px; text-align: center; margin-bottom: 6px;">
+                    <tr style="background: #f8fafc; font-weight: bold;">
+                        <td style="width: 20%;">المجموع الفرعي<br>SubTotal</td>
+                        <td style="width: 20%;">ضريبة القيمة المضافة (15%)<br>VAT (15%)</td>
+                        <td style="width: 20%;">المجموع<br>Total</td>
+                        <td style="width: 13.3%;">تم الدفع<br>Payment Made</td>
+                        <td style="width: 13.3%;">الخصومات<br>Discount</td>
+                        <td style="width: 13.4%;">الرصيد المستحق<br>Balance Due</td>
+                    </tr>
+                    <tr style="font-weight: bold; font-size: 8.5px;">
+                        <td>${subtotal.toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+                        <td>${vatTotal.toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+                        <td>${grandTotal.toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+                        <td>: 0</td>
+                        <td>0.00</td>
+                        <td>${grandTotal.toLocaleString('en-US', {minimumFractionDigits: 2})}</td>
+                    </tr>
+                </table>
+
+                <!-- AMOUNT IN WORDS -->
+                <div style="border: 1px solid #000; padding: 4px; font-size: 8px; font-weight: bold; text-align: center; margin-bottom: 8px;">
+                    Total in words : Saudi Riyals One Thousand Two Hundred Forty Two
+                </div>
+
+                <!-- SIGNATURE, BANK & QR BLOCK -->
+                <table class="zatca-table" style="width: 100%; margin-bottom: 15px;">
+                    <tr>
+                        <!-- Bank Details -->
+                        <td style="width: 42%; vertical-align: top; padding: 4px; font-size: 7px;">
+                            <div style="font-weight: bold; text-align: center; border-bottom: 1px solid #000; padding-bottom: 2px; margin-bottom: 3px;">
+                                التفاصيل المصرفية / Bank Details
+                            </div>
+                            <div style="line-height: 1.3;">
+                                Account Name / <span class="arabic-text">اسم الحساب</span> :<br>
+                                <b>Moana Al Arabia General Contracting Establishment</b><br>
+                                Bank Name / <span class="arabic-text">اسم البنك</span> : <span style="float: right;"><b>${document.getElementById('bankName').value}</b></span><br>
+                                Account Number / <span class="arabic-text">رقم الحساب</span> : <span style="float: right;"><b>${document.getElementById('bankAccount').value}</b></span><br>
+                                IBAN No / <span class="arabic-text">رقم الآيبان</span> :<br>
+                                <b>${document.getElementById('bankIban').value}</b><br>
+                                Branch Name / <span class="arabic-text">اسم الفرع</span> : <span style="float: right;"><b>${document.getElementById('bankBranch').value}</b></span>
+                            </div>
+                        </td>
+
+                        <!-- Prepared By -->
+                        <td style="width: 21%; vertical-align: top; padding: 4px; text-align: center; position: relative;">
+                            <div style="font-size: 7px; font-weight: bold;">Prepared By<br><span class="arabic-text">أعدت بواسطة</span></div>
+                            ${stampHTML}
+                            <div style="margin-top: 50px; font-size: 6.5px; font-weight: bold;">Signature with stamp / <span class="arabic-text">التوقيع مع الختم</span></div>
+                        </td>
+
+                        <!-- Received By -->
+                        <td style="width: 21%; vertical-align: top; padding: 4px; text-align: center;">
+                            <div style="font-size: 7px; font-weight: bold;">Received By<br><span class="arabic-text">تم الاستلام من قبل</span></div>
+                            <div style="margin-top: 50px; font-size: 6.5px; font-weight: bold;">Signature with stamp / <span class="arabic-text">التوقيع مع الختم</span></div>
+                        </td>
+
+                        <!-- ZATCA QR CODE -->
+                        <td style="width: 16%; vertical-align: top; padding: 4px; text-align: center;">
+                            <div style="font-size: 7px; font-weight: bold; margin-bottom: 2px;">QR (ZATCA)</div>
+                            <div style="display: inline-flex; align-items:center; justify-content:center; padding: 2px; background: white; border: 1px solid #000; width: 62px; height: 62px; box-sizing: border-box; margin: auto;">
+                                <div id="zatcaQrCodeBox" style="width: 56px; height: 56px; display: flex; align-items: center; justify-content: center;"></div>
+                            </div>
+                            <div style="font-size: 6px; font-weight: bold; color: #15803d; margin-top: 2px;">✓ ZATCA Validated</div>
+                        </td>
+                    </tr>
+                </table>
+
+                <!-- FOOTER -->
+                <div style="position: absolute; bottom: 10mm; left: 10mm; right: 10mm; border-top: 2px solid #0d2346; padding-top: 4px; text-align: center; color: #334155;">
+                    <div class="arabic-text" style="font-weight: bold; font-size: 8.5px; color: #0d2346; margin-bottom: 1px; direction: rtl;">الجبيل &ndash; المنطقة الشرقية &ndash; جوال : ٠٥٠٣٥٦٤٠٠٧ &ndash; المملكة العربية السعودية</div>
+                    <div style="font-size: 7.5px; font-weight: 600; color: #334155; margin-bottom: 1px;">Jubail, Eastern Province - Mobile: +966 050 356 4007 - Kingdom of Saudi Arabia</div>
+                    <div style="font-size: 7.5px; font-weight: 600; color: #c59b27; font-weight: 700;">E-mail : masoud@kayidaljazeera.com</div>
+                    <div style="position: absolute; right: 0; top: 4px; color: #94a3b8; font-size: 6px;">Page 1 of ${includePage2 ? '2' : '1'}</div>
+                </div>
+            </div>
+        `;
+
+        // PAGE 2 HTML TEMPLATE
+        const page2HTML = `
+            <div class="pdf-page" id="pdfPage2">
+                <!-- HEADER TOP -->
+                <div style="display: table; width: 100%; margin-bottom: 12px;">
+                    <div style="display: table-cell; vertical-align: top; width: 55%;">
+                        <div style="display: table;">
+                            <div style="display: table-cell; vertical-align: top; padding-right: 8px;">
+                                <div style="width: 52px; height: 52px;">
+                                    <img src="data:image/png;base64,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" style="width:50px;height:50px;object-fit:contain;" />
+                                </div>
+                            </div>
+                            <div style="display: table-cell; vertical-align: top;">
+                                <div style="font-weight: 800; font-size: 13px; color: #0d2346;">${coNameEn}</div>
+                                <div style="color: #334155; font-size: 8px; font-weight: 700;">${coSubTitle}</div>
+                                <div style="font-size: 7.5px; color: #64748b; font-weight: 600;">C.R.: ${coCr} | VAT: ${coVat}</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="display: table-cell; vertical-align: top; text-align: right; width: 45%;">
+                        <div class="arabic-text" style="font-weight: bold; font-size: 14px; color: #0d2346;">شركة كايد الجزيرة</div>
+                        <div style="font-size: 7.5px; color: #475569;">Jubail, Eastern Province, Kingdom of Saudi Arabia<br>+966 050 356 4007</div>
+                    </div>
+                </div>
+
+                <!-- TITLE BLOCK -->
+                <div style="border: 1.5px solid #000; padding: 6px; text-align: center; font-weight: 800; font-size: 12px; margin-bottom: 10px;">
+                    ${document.getElementById('buyerNameEn').value}
+                </div>
+
+                <div style="text-align: center; font-weight: 800; font-size: 10px; margin-bottom: 4px;">
+                    PROJECT: ${document.getElementById('projectRef').value}
+                </div>
+                <div style="text-align: center; font-weight: 800; font-size: 9px; margin-bottom: 14px;">
+                    SUMMARY SHEET MONTH OF JULY 2026
+                </div>
+
+                <!-- WORKERS TIMESHEET TABLE -->
+                <table class="zatca-table" style="width: 100%; margin-bottom: 0px;">
+                    <thead>
+                        <tr style="background: #f8fafc; font-size: 8px; text-align: center; font-weight: 800;">
+                            <th style="width: 8%; padding: 5px;">SL</th>
+                            <th style="width: 42%; text-align: left; padding-left: 10px;">NAME</th>
+                            <th style="width: 20%;">TREAD</th>
+                            <th style="width: 10%;">T.HOUR</th>
+                            <th style="width: 10%;">RATE</th>
+                            <th style="width: 10%;">AMOUNT</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${workerTableRowsHTML}
+                        <tr style="font-weight: 800; font-size: 8.5px; text-align: center; background: #fafafa;">
+                            <td colspan="3" style="border: 1px solid #000; text-align: center; padding: 5px;">TOTAL=</td>
+                            <td style="border: 1px solid #000;">${totalWorkerHours.toFixed(2)}</td>
+                            <td style="border: 1px solid #000;"></td>
+                            <td style="border: 1px solid #000; text-align: right; padding-right: 6px;">SAR ${subtotal.toFixed(2)}</td>
+                        </tr>
+                        <tr style="font-weight: 800; font-size: 8.5px; text-align: center;">
+                            <td colspan="5" style="border: 1px solid #000; padding: 5px;">VAT 15%=</td>
+                            <td style="border: 1px solid #000; text-align: right; padding-right: 6px;">SAR ${vatTotal.toFixed(2)}</td>
+                        </tr>
+                        <tr style="font-weight: 800; font-size: 9px; text-align: center; background: #f1f5f9;">
+                            <td colspan="5" style="border: 1px solid #000; padding: 6px;">TOTAL AMOUNT=</td>
+                            <td style="border: 1px solid #000; text-align: right; padding-right: 6px; font-weight: 900;">SAR ${grandTotal.toFixed(2)}</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- FOOTER BARS -->
+                <div style="position: absolute; bottom: 10mm; left: 10mm; right: 10mm;">
+                    <div style="text-align: right; color: #94a3b8; font-size: 6px; margin-bottom: 4px;">Page 2 of 2</div>
+                    <div style="border-top: 2px solid #0d2346; padding-top: 4px; text-align: center; color: #334155;">
+                        <div class="arabic-text" style="font-weight: bold; font-size: 8.5px; color: #0d2346; margin-bottom: 1px; direction: rtl;">الجبيل &ndash; المنطقة الشرقية &ndash; جوال : ٠٥٠٣٥٦٤٠٠٧ &ndash; المملكة العربية السعودية</div>
+                        <div style="font-size: 7.5px; font-weight: 600; color: #334155; margin-bottom: 1px;">Jubail, Eastern Province - Mobile: +966 050 356 4007 - Kingdom of Saudi Arabia</div>
+                        <div style="font-size: 7.5px; font-weight: 600; color: #c59b27; font-weight: 700;">E-mail : masoud@kayidaljazeera.com</div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+
+        const renderContainer = document.getElementById('previewRenderArea');
+        
+        if (!includePage2) {
+            renderContainer.innerHTML = page1HTML;
+        } else {
+            if (activeTab === 'all') {
+                renderContainer.innerHTML = page1HTML + page2HTML;
+            } else if (activeTab === 'page1') {
+                renderContainer.innerHTML = page1HTML;
+            } else if (activeTab === 'page2') {
+                renderContainer.innerHTML = page2HTML;
+            }
+        }
+
+        // Generate Live ZATCA TLV Base64 QR Code
+        const qrBox = document.getElementById('zatcaQrCodeBox');
+        if (qrBox) {
+            qrBox.innerHTML = '';
+            const invDate = document.getElementById('invoiceDate').value || '13/08/2026';
+            const zatcaTime = formatZatcaTimestamp(invDate);
+            const zatcaSeller = coNameEn || 'KAYID ALJAZEERA COMPANY';
+            const zatcaVat = coVat || '315035698500003';
+            const zatcaGrandTotal = grandTotal.toFixed(2);
+            const zatcaVatTotal = vatTotal.toFixed(2);
+
+            const zatcaBase64 = generateZatcaTLVBase64(zatcaSeller, zatcaVat, zatcaTime, zatcaGrandTotal, zatcaVatTotal);
+
+            if (typeof QRCode !== 'undefined') {
+                new QRCode(qrBox, {
+                    text: zatcaBase64,
+                    width: 56,
+                    height: 56,
+                    colorDark : "#000000",
+                    colorLight : "#ffffff",
+                    correctLevel : QRCode.CorrectLevel.M
+                });
+
+                // qrcode.js renders the canvas asynchronously via setTimeout(0).
+                // Poll until the canvas has pixel data, then freeze it as an <img>.
+                waitForQrCanvas(qrBox, 700).then(canvas => {
+                    if (canvas) {
+                        try {
+                            const url = canvas.toDataURL('image/png');
+                            if (url && url.length > 100) {
+                                setQrBoxToImg(qrBox, url);
+                            }
+                        } catch(e) {
+                            console.warn('QR canvas toDataURL in updateRender failed:', e);
+                        }
+                    }
+                });
+            } else {
+                qrBox.innerHTML = '<span style="font-size:6px;color:#94a3b8;">QR Ready</span>';
+            }
+        }
+    }
+
+    // ─── QR UTILITY: poll a QR box until the canvas is painted, then convert to <img> ───
+    // qrcode.js renders its canvas on a setTimeout(0) inside the library, so we
+    // cannot rely on the canvas being ready synchronously after `new QRCode(...)`.
+    // We poll every 30 ms for up to 600 ms, then give up gracefully.
+    function waitForQrCanvas(box, timeoutMs) {
+        return new Promise(resolve => {
+            if (!box) { resolve(null); return; }
+            const deadline = Date.now() + (timeoutMs || 600);
+            function check() {
+                const canvas = box.querySelector('canvas');
+                if (canvas) {
+                    // Extra guard: a freshly-created canvas may have width/height but
+                    // the pixel data may still be blank (all zeros). Check a pixel.
+                    try {
+                        const ctx = canvas.getContext('2d');
+                        const px  = ctx.getImageData(0, 0, 1, 1).data;
+                        // If at least one channel is non-zero the canvas has been painted
+                        if (px[0] !== 0 || px[1] !== 0 || px[2] !== 0 || px[3] !== 0) {
+                            resolve(canvas);
+                            return;
+                        }
+                    } catch(e) {
+                        // cross-origin taint — fall through and try toDataURL directly
+                        resolve(canvas);
+                        return;
+                    }
+                }
+                if (Date.now() >= deadline) { resolve(null); return; }
+                setTimeout(check, 30);
+            }
+            check();
+        });
+    }
+
+    // Convert whatever is inside `box` (canvas or img) into a data-URL string.
+    // Returns null on failure.
+    function extractQrDataUrl(box) {
+        if (!box) return null;
+        // Already converted to <img data:…> — just return the src
+        const img = box.querySelector('img');
+        if (img && img.src && img.src.startsWith('data:')) return img.src;
+        // Try canvas
+        const canvas = box.querySelector('canvas');
+        if (canvas) {
+            try {
+                const url = canvas.toDataURL('image/png');
+                if (url && url.length > 100) return url;
+            } catch(e) {}
+        }
+        return null;
+    }
+
+    // Replace the contents of `box` with a static <img> whose src is the data-URL.
+    function setQrBoxToImg(box, dataUrl) {
+        if (!box || !dataUrl) return;
+        box.innerHTML = '';
+        const img = document.createElement('img');
+        img.src = dataUrl;
+        img.alt = 'ZATCA QR Code';
+        img.style.cssText =
+            'width:56px;height:56px;display:block;visibility:visible;' +
+            'opacity:1;margin:0 auto;image-rendering:pixelated;' +
+            'image-rendering:-webkit-optimize-contrast;';
+        box.appendChild(img);
+    }
+
+    // ─── Generate a FRESH QR data-URL off-screen, completely independent of the
+    //     live preview canvas.  This is the most reliable approach for PDF export. ───
+    function generateFreshQrDataUrl(zatcaBase64) {
+        return new Promise(resolve => {
+            if (typeof QRCode === 'undefined') { resolve(null); return; }
+
+            // Create an off-screen container (not attached to DOM so it won't flash)
+            const offscreen = document.createElement('div');
+            offscreen.style.cssText =
+                'position:fixed;left:-9999px;top:-9999px;width:56px;height:56px;' +
+                'visibility:hidden;pointer-events:none;';
+            document.body.appendChild(offscreen);
+
+            try {
+                new QRCode(offscreen, {
+                    text: zatcaBase64,
+                    width: 128,    // render at higher res for better PDF quality
+                    height: 128,
+                    colorDark : '#000000',
+                    colorLight: '#ffffff',
+                    correctLevel: QRCode.CorrectLevel.M
+                });
+            } catch(e) {
+                document.body.removeChild(offscreen);
+                resolve(null);
+                return;
+            }
+
+            // Poll until the canvas is painted
+            waitForQrCanvas(offscreen, 800).then(canvas => {
+                let dataUrl = null;
+                if (canvas) {
+                    try { dataUrl = canvas.toDataURL('image/png'); } catch(e) {}
+                }
+                try { document.body.removeChild(offscreen); } catch(e) {}
+                resolve(dataUrl && dataUrl.length > 100 ? dataUrl : null);
+            });
+        });
+    }
+
+    async function printPDF() {
+        const includePage2 = document.getElementById('includePage2Checkbox').checked;
+        const invNo        = document.getElementById('invoiceNo').value || 'Invoice';
+
+        // ── 1. Generate fresh QR and inject into live QR box ─────────────────────
+        const coNameEnVal = (document.getElementById('coNameEn').value || 'KAYID ALJAZEERA COMPANY').trim();
+        const coVatVal    = (document.getElementById('coVat').value    || '315035698500003').trim();
+        const invDateVal  = (document.getElementById('invoiceDate').value || '').trim();
+        const zatcaTime   = formatZatcaTimestamp(invDateVal);
+
+        let sub = 0;
+        document.querySelectorAll('.line-item-row').forEach(function(row) {
+            sub += (parseFloat(row.querySelector('.item-qty').value)   || 0) *
+                   (parseFloat(row.querySelector('.item-price').value) || 0);
+        });
+        const vatAmt   = sub * 0.15;
+        const totalAmt = sub + vatAmt;
+
+        const tlvB64   = generateZatcaTLVBase64(coNameEnVal, coVatVal, zatcaTime,
+                             totalAmt.toFixed(2), vatAmt.toFixed(2));
+        const qrDataUrl = await generateFreshQrDataUrl(tlvB64);
+
+        // Inject QR as <img> into the live box so print CSS captures it
+        var liveQrBox = document.getElementById('zatcaQrCodeBox');
+        if (liveQrBox) {
+            liveQrBox.innerHTML = '';
+            if (qrDataUrl) {
+                var qi = document.createElement('img');
+                qi.src              = qrDataUrl;
+                qi.alt              = 'ZATCA QR';
+                qi.style.width      = '56px';
+                qi.style.height     = '56px';
+                qi.style.display    = 'block';
+                qi.style.visibility = 'visible';
+                qi.style.opacity    = '1';
+                qi.style.margin     = '0 auto';
+                liveQrBox.appendChild(qi);
+            }
+        }
+
+        // Convert any leftover canvas → img
+        ['pdfPage1','pdfPage2'].forEach(function(id) {
+            var pg = document.getElementById(id);
+            if (!pg) return;
+            pg.querySelectorAll('canvas').forEach(function(cvs) {
+                try {
+                    var ci = document.createElement('img');
+                    ci.src = cvs.toDataURL('image/png');
+                    ci.style.cssText = 'width:56px;height:56px;display:block;margin:0 auto;';
+                    cvs.parentNode.replaceChild(ci, cvs);
+                } catch(e) { cvs.remove(); }
+            });
+        });
+
+        // ── 2. Build the hidden #__printArea__ div at body level ─────────────────
+        // Remove any leftover one first
+        var old = document.getElementById('__printArea__');
+        if (old) old.parentNode.removeChild(old);
+
+        var printArea = document.createElement('div');
+        printArea.id  = '__printArea__';
+        // Hidden on screen (off-left), shown only via @media print CSS
+        printArea.style.cssText = 'position:fixed;left:-9999px;top:0;width:210mm;background:white;';
+
+        var p1 = document.getElementById('pdfPage1');
+        var p2 = document.getElementById('pdfPage2');
+
+        if (!p1) {
+            alert('Preview not loaded yet. Please wait a moment and try again.');
+            return;
+        }
+
+        // Deep-clone so the live preview is untouched
+        if (activeTab === 'page2' && p2) {
+            printArea.appendChild(p2.cloneNode(true));
+        } else if (!includePage2 || activeTab === 'page1' || !p2) {
+            printArea.appendChild(p1.cloneNode(true));
+        } else {
+            printArea.appendChild(p1.cloneNode(true));
+            printArea.appendChild(p2.cloneNode(true));
+        }
+
+        // Re-inject QR into the clone (cloneNode carries the <img> we just set)
+        // Double-check and overwrite to be 100% sure
+        var cloneQrBox = printArea.querySelector('#zatcaQrCodeBox');
+        if (cloneQrBox && qrDataUrl) {
+            cloneQrBox.innerHTML = '';
+            var cqi = document.createElement('img');
+            cqi.src              = qrDataUrl;
+            cqi.alt              = 'ZATCA QR';
+            cqi.style.width      = '56px';
+            cqi.style.height     = '56px';
+            cqi.style.display    = 'block';
+            cqi.style.visibility = 'visible';
+            cqi.style.opacity    = '1';
+            cqi.style.margin     = '0 auto';
+            cloneQrBox.appendChild(cqi);
+        }
+
+        document.body.appendChild(printArea);
+
+        // ── 3. Wait for clone's images to decode, then print ─────────────────────
+        var cloneImgs = Array.from(printArea.querySelectorAll('img'));
+        await Promise.all(cloneImgs.map(function(img) {
+            if (img.complete && img.naturalWidth > 0) return Promise.resolve();
+            return new Promise(function(res) {
+                img.onload  = res;
+                img.onerror = res;
+                setTimeout(res, 1500);
+            });
+        }));
+
+        // One frame settle
+        await new Promise(function(res) {
+            requestAnimationFrame(function() { requestAnimationFrame(res); });
+        });
+
+        // ── 4. Print — browser handles "Save as PDF" natively ────────────────────
+        window.print();
+
+        // ── 5. Clean up after print dialog closes ────────────────────────────────
+        setTimeout(function() {
+            var pa = document.getElementById('__printArea__');
+            if (pa) pa.parentNode.removeChild(pa);
+        }, 1000);
+    }
+</script>
+</body>
+</html>
