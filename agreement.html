@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Service Agreement Editor - KAYID ALJAZEERA</title>
+    <title>Service Agreement Editor - KAYID AL JAZEERA CONTRACTING COMPANY</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
@@ -36,7 +36,7 @@
 <div class="bg-white border border-slate-200 rounded-xl p-4 mb-5 flex flex-wrap justify-between items-center shadow-sm">
     <div>
         <h1 class="text-xs font-extrabold tracking-wider text-slate-800 uppercase">SERVICE AGREEMENT EDITOR</h1>
-        <p class="text-[11px] text-slate-500 font-medium">KAYID ALJAZEERA COMPANY · Bilingual Service Agreement اتفاقية خدمات</p>
+        <p class="text-[11px] text-slate-500 font-medium">KAYID AL JAZEERA CONTRACTING COMPANY · Bilingual Service Agreement اتفاقية خدمات</p>
     </div>
     <div class="flex items-center gap-3 mt-2 sm:mt-0">
         <a href="index.html" class="btn-ghost inline-flex items-center gap-1.5 no-underline">
@@ -57,12 +57,12 @@
 <div class="max-h-[88vh] overflow-y-auto pr-1">
 <form id="agreementForm">
 
-<!-- 00 · KAYID ALJAZEERA INFO -->
+<!-- 00 · KAYID AL JAZEERA CONTRACTING COMPANY INFO -->
 <div class="section-card border-l-4 border-l-[#c59b27]">
-    <div class="section-title mb-3">00 · KAYID ALJAZEERA (Our Company - First Party / الطرف الأول)</div>
+    <div class="section-title mb-3">00 · KAYID AL JAZEERA CONTRACTING COMPANY (Our Company - First Party / الطرف الأول)</div>
     <div class="grid grid-cols-2 gap-3 mb-3">
-        <div><label class="form-label">COMPANY NAME (EN)</label><input type="text" id="fp_nameEN" class="form-input" value="KAYID ALJAZEERA COMPANY"></div>
-        <div><label class="form-label">COMPANY NAME (AR)</label><input type="text" id="fp_nameAR" class="form-input form-input-ar arabic-text" value="شركة كايد الجزيرة"></div>
+        <div><label class="form-label">COMPANY NAME (EN)</label><input type="text" id="fp_nameEN" class="form-input" value="KAYID AL JAZEERA CONTRACTING COMPANY"></div>
+        <div><label class="form-label">COMPANY NAME (AR)</label><input type="text" id="fp_nameAR" class="form-input form-input-ar arabic-text" value="شركة كايد الجزيرة للمقاولات"></div>
     </div>
     <div class="mb-3"><label class="form-label">SUB-TITLE</label><input type="text" id="fp_subTitle" class="form-input" value="CONTRACTING COMPANY LLC · KSA"></div>
     <div class="grid grid-cols-2 gap-3 mb-3">
@@ -106,8 +106,8 @@
 <!-- 03 · CONTRACT DETAILS -->
 <div class="section-card">
     <div class="section-title mb-3">03 · CONTRACT DETAILS</div>
-    <div class="mb-3"><label class="form-label">WORK DESCRIPTION (EN)</label><textarea id="workDescEN" rows="2" class="form-input">Assigned to the second party, by KAYID ALJAZEERA COMPANY.</textarea></div>
-    <div class="mb-3"><label class="form-label">WORK DESCRIPTION (AR)</label><textarea id="workDescAR" rows="2" class="form-input form-input-ar arabic-text">المسندة إلى الطرف الثاني من شركة كايد الجزيرة</textarea></div>
+    <div class="mb-3"><label class="form-label">WORK DESCRIPTION (EN)</label><textarea id="workDescEN" rows="2" class="form-input">Assigned to the second party, by KAYID AL JAZEERA CONTRACTING COMPANY.</textarea></div>
+    <div class="mb-3"><label class="form-label">WORK DESCRIPTION (AR)</label><textarea id="workDescAR" rows="2" class="form-input form-input-ar arabic-text">المسندة إلى الطرف الثاني من شركة كايد الجزيرة للمقاولات</textarea></div>
     <div class="grid grid-cols-2 gap-3 mb-3">
         <div><label class="form-label">CONTRACT NO. REF</label><input type="text" id="contractNoRef" class="form-input" value="250078"></div>
         <div><label class="form-label">WORK LOCATION</label><input type="text" id="workLocation" class="form-input" value="Khobar housing"></div>
@@ -135,7 +135,7 @@
     </div>
     <p class="text-[11px] text-slate-500 mb-3 font-medium">Select stamp images from your PC. The system automatically removes white paper backgrounds like in MS Word, making stamps transparent on the contract.</p>
 
-    <!-- FIRST PARTY STAMP (KAYID ALJAZEERA) -->
+    <!-- FIRST PARTY STAMP (KAYID AL JAZEERA CONTRACTING COMPANY) -->
     <div class="p-3 bg-slate-50 border border-slate-200 rounded-lg mb-4">
         <div class="flex items-center justify-between mb-2">
             <span class="font-bold text-xs text-blue-900">First Party Stamp (ختم كايد الجزيرة - الطرف الأول)</span>
@@ -259,8 +259,8 @@ function renumberTerms() {
 }
 
 function loadDefaultData() {
-    document.getElementById('fp_nameEN').value    = 'KAYID ALJAZEERA COMPANY';
-    document.getElementById('fp_nameAR').value = 'شركة كايد الجزيرة';
+    document.getElementById('fp_nameEN').value    = 'KAYID AL JAZEERA CONTRACTING COMPANY';
+    document.getElementById('fp_nameAR').value = 'شركة كايد الجزيرة للمقاولات';
     document.getElementById('fp_subTitle').value  = 'CONTRACTING COMPANY LLC · KSA';
     document.getElementById('fp_cr').value        = '7052038598';
     document.getElementById('fp_vat').value       = '315035698500003';
@@ -279,8 +279,8 @@ function loadDefaultData() {
     document.getElementById('sp_fax').value     = '2291056';
     document.getElementById('sp_email').value   = 'info@saneel.org';
 
-    document.getElementById('workDescEN').value    = 'Assigned to the second party, by KAYID ALJAZEERA COMPANY.';
-    document.getElementById('workDescAR').value = 'المسندة إلى الطرف الثاني من شركة كايد الجزيرة';
+    document.getElementById('workDescEN').value    = 'Assigned to the second party, by KAYID AL JAZEERA CONTRACTING COMPANY.';
+    document.getElementById('workDescAR').value = 'المسندة إلى الطرف الثاني من شركة كايد الجزيرة للمقاولات';
     document.getElementById('contractNoRef').value = '250078';
     document.getElementById('workLocation').value  = 'Khobar housing';
     document.getElementById('workDuration').value  = '365 days';
@@ -404,8 +404,8 @@ function reprocessSPStamp() {
 }
 
 function updatePreview() {
-    const fpNameEN   = document.getElementById('fp_nameEN').value    || 'KAYID ALJAZEERA COMPANY';
-    const fpNameAR   = document.getElementById('fp_nameAR').value    || 'شركة كايد الجزيرة';
+    const fpNameEN   = document.getElementById('fp_nameEN').value    || 'KAYID AL JAZEERA CONTRACTING COMPANY';
+    const fpNameAR   = document.getElementById('fp_nameAR').value    || 'شركة كايد الجزيرة للمقاولات';
     const fpSubTitle = document.getElementById('fp_subTitle').value  || 'CONTRACTING COMPANY LLC · KSA';
     const fpCR       = document.getElementById('fp_cr').value        || '7052038598';
     const fpVat      = document.getElementById('fp_vat').value       || '315035698500003';

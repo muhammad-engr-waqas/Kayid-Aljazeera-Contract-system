@@ -227,7 +227,7 @@
         <div class="bg-white border border-slate-200 rounded-xl p-4 mb-5 flex flex-wrap justify-between items-center shadow-sm">
             <div>
                 <h1 class="text-xs font-extrabold tracking-wider text-slate-800 uppercase">VAT INVOICE & TIMESHEET EDITOR</h1>
-                <p class="text-[11px] text-slate-500 font-medium">ZATCA Tax Compliant (KAYID ALJAZEERA Format)</p>
+                <p class="text-[11px] text-slate-500 font-medium">ZATCA Tax Compliant (KAYID AL JAZEERA CONTRACTING COMPANY Format)</p>
             </div>
             <div class="flex items-center gap-3 mt-2 sm:mt-0">
                 <a href="index.html" class="btn-ghost inline-flex items-center gap-1.5 no-underline">
@@ -254,11 +254,11 @@
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
                             <div>
                                 <label class="form-label">COMPANY NAME (EN)</label>
-                                <input type="text" id="coNameEn" class="form-input" value="KAYID ALJAZEERA COMPANY">
+                                <input type="text" id="coNameEn" class="form-input" value="KAYID AL JAZEERA CONTRACTING COMPANY">
                             </div>
                             <div>
                                 <label class="form-label text-right">اسم الشركة (AR)</label>
-                                <input type="text" id="coNameAr" class="form-input text-right arabic-text" value="شركة كايد الجزيرة">
+                                <input type="text" id="coNameAr" class="form-input text-right arabic-text" value="شركة كايد الجزيرة للمقاولات">
                             </div>
                         </div>
                         <div class="mb-3">
@@ -340,11 +340,11 @@
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
                             <div>
                                 <label class="form-label">CUSTOMER NAME (EN)</label>
-                                <input type="text" id="buyerNameEn" class="form-input" value="KAYID ALJAZEERA COMPANY">
+                                <input type="text" id="buyerNameEn" class="form-input" value="KAYID AL JAZEERA CONTRACTING COMPANY">
                             </div>
                             <div>
                                 <label class="form-label text-right">اسم العميل (AR)</label>
-                                <input type="text" id="buyerNameAr" class="form-input text-right arabic-text" value="شركة كايد الجزيرة">
+                                <input type="text" id="buyerNameAr" class="form-input text-right arabic-text" value="شركة كايد الجزيرة للمقاولات">
                             </div>
                         </div>
 
@@ -679,7 +679,7 @@
     }
 
     function generateZatcaTLVBase64(sellerName, vatNumber, timestamp, totalAmount, vatAmount) {
-        const tlv1 = getTlvBytes(1, sellerName || 'KAYID ALJAZEERA COMPANY');
+        const tlv1 = getTlvBytes(1, sellerName || 'KAYID AL JAZEERA CONTRACTING COMPANY');
         const tlv2 = getTlvBytes(2, vatNumber || '315035698500003');
         const tlv3 = getTlvBytes(3, timestamp);
         const tlv4 = getTlvBytes(4, parseFloat(totalAmount || 0).toFixed(2));
@@ -705,8 +705,8 @@
         const includePage2 = document.getElementById('includePage2Checkbox').checked;
 
         // Company Info
-        const coNameEn = document.getElementById('coNameEn').value || 'KAYID ALJAZEERA COMPANY';
-        const coNameAr = document.getElementById('coNameAr').value || 'شركة كايد الجزيرة';
+        const coNameEn = document.getElementById('coNameEn').value || 'KAYID AL JAZEERA CONTRACTING COMPANY';
+        const coNameAr = document.getElementById('coNameAr').value || 'شركة كايد الجزيرة للمقاولات';
         const coSubTitle = document.getElementById('coSubTitle').value || 'CONTRACTING COMPANY LLC · KSA';
         const coCr = document.getElementById('coCr').value || '7052038558';
         const coVat = document.getElementById('coVat').value || '315035698500003';
@@ -804,7 +804,7 @@
                         </div>
                     </div>
                     <div style="display: table-cell; vertical-align: top; text-align: right; width: 45%;">
-                        <div class="arabic-text" style="font-weight: bold; font-size: 14px; color: #0d2346;">شركة كايد الجزيرة</div>
+                        <div class="arabic-text" style="font-weight: bold; font-size: 14px; color: #0d2346;">شركة كايد الجزيرة للمقاولات</div>
                         <div style="font-size: 7.5px; color: #475569; line-height: 1.2;">
                             Jubail, Eastern Province, Kingdom of Saudi Arabia<br>+966 050 356 4007
                         </div>
@@ -1004,7 +1004,7 @@
                         </div>
                     </div>
                     <div style="display: table-cell; vertical-align: top; text-align: right; width: 45%;">
-                        <div class="arabic-text" style="font-weight: bold; font-size: 14px; color: #0d2346;">شركة كايد الجزيرة</div>
+                        <div class="arabic-text" style="font-weight: bold; font-size: 14px; color: #0d2346;">شركة كايد الجزيرة للمقاولات</div>
                         <div style="font-size: 7.5px; color: #475569;">Jubail, Eastern Province, Kingdom of Saudi Arabia<br>+966 050 356 4007</div>
                     </div>
                 </div>
@@ -1085,7 +1085,7 @@
             qrBox.innerHTML = '';
             const invDate = document.getElementById('invoiceDate').value || '13/08/2026';
             const zatcaTime = formatZatcaTimestamp(invDate);
-            const zatcaSeller = coNameEn || 'KAYID ALJAZEERA COMPANY';
+            const zatcaSeller = coNameEn || 'KAYID AL JAZEERA CONTRACTING COMPANY';
             const zatcaVat = coVat || '315035698500003';
             const zatcaGrandTotal = grandTotal.toFixed(2);
             const zatcaVatTotal = vatTotal.toFixed(2);
@@ -1233,7 +1233,7 @@
         const invNo        = document.getElementById('invoiceNo').value || 'Invoice';
 
         // ── 1. Generate fresh QR and inject into live QR box ─────────────────────
-        const coNameEnVal = (document.getElementById('coNameEn').value || 'KAYID ALJAZEERA COMPANY').trim();
+        const coNameEnVal = (document.getElementById('coNameEn').value || 'KAYID AL JAZEERA CONTRACTING COMPANY').trim();
         const coVatVal    = (document.getElementById('coVat').value    || '315035698500003').trim();
         const invDateVal  = (document.getElementById('invoiceDate').value || '').trim();
         const zatcaTime   = formatZatcaTimestamp(invDateVal);
